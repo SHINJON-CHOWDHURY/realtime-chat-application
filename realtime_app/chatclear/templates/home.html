@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BitTalk</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+      :root {
+        --wa-teal: #00a884;
+        --wa-bg-gray: #f0f2f5;
+        --wa-dark-text: #111b21;
+        --wa-secondary-text: #667781;
+        --wa-border: #e9edef;
+        --wa-hover: #f5f6f6;
+        --wa-white: #ffffff;
+        --body-bg: #d1d7db;
+        --landing-bg: #f8f9fa;
+        /* Variables for Chat Bubbles */
+        --bubble-in: #ffffff;
+        --bubble-out: #d9fdd3;
+      }
+
+      body.dark-mode {
+        --wa-bg-gray: #202c33;
+        --wa-dark-text: #e9edef;
+        --wa-secondary-text: #8696a0;
+        --wa-border: #222d34;
+        --wa-hover: #2a3942;
+        --wa-white: #111b21;
+        --body-bg: #0b141a;
+        --landing-bg: #222e35;
+        /* Variables for Chat Bubbles Dark Mode */
+        --bubble-in: #202c33;
+        --bubble-out: #005c4b;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* FIX: Autofill background color and text color when typing email */
+      input:-webkit-autofill,
+      input:-webkit-autofill:hover,
+      input:-webkit-autofill:focus {
+        -webkit-text-fill-color: var(--wa-dark-text) !important;
+        -webkit-box-shadow: 0 0 0px 1000px var(--wa-bg-gray) inset !important;
+        transition: background-color 5000s ease-in-out 0s;
+      }
+
+      body {
+        background-color: var(--body-bg);
+        background-image: linear-gradient(
+          to bottom,
+          var(--wa-teal) 0%,
+          var(--wa-teal) 130px,
+          var(--body-bg) 130px,
+          var(--body-bg) 100%
+        );
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition: background-color 0.4s ease;
+      }
+
+      .app-wrapper {
+        width: 100%;
+        max-width: 1600px;
+        height: 100%;
+        display: flex;
+        background: var(--wa-white);
+        box-shadow: 0 16px 24px 0 rgba(0, 0, 0, 0.1);
+        transition: background-color 0.4s ease;
+      }
+
+      .sidebar {
+        width: 100%;
+        max-width: 450px;
+        display: flex;
+        flex-direction: column;
+        background: var(--wa-white);
+        border-right: 1px solid var(--wa-border);
+        transition:
+          background-color 0.4s ease,
+          border-color 0.4s ease;
+      }
+
+      .header {
+        height: 60px;
+        background: var(--wa-bg-gray);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 16px;
+        transition: background-color 0.4s ease;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 15px;
+        color: var(--wa-secondary-text);
+      }
+
+      .settings-wrapper {
+  position: relative;
+}
+
+#settings-icon {
+  cursor: pointer;
+}
+
+.settings-dropdown {
+  display: none;
+
+  position: absolute;
+
+  right: 0;
+  top: 35px;
+
+  background: var(--wa-white);
+
+  border-radius: 8px;
+
+  min-width: 160px;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+
+  border: 1px solid var(--wa-border);
+
+  z-index: 999;
+}
+
+.settings-dropdown button {
+  width: 100%;
+
+  padding: 10px 14px;
+
+  border: none;
+
+  background: none;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--wa-dark-text);
+}
+
+.settings-dropdown button:hover {
+  background: var(--wa-hover);
+}
+
+      /* RESTORED THEME TOGGLE ANIMATION */
+      #theme-toggle {
+        cursor: pointer;
+        font-size: 1.2rem;
+        padding: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        /* This transition makes the rotation smooth */
+        transition:
+          transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          color 0.3s ease;
+      }
+
+      body.dark-mode #theme-toggle {
+        transform: rotate(360deg);
+        color: #f1c40f;
+      }
+
+      .search-area {
+        padding: 7px 12px;
+        border-bottom: 1px solid var(--wa-border);
+      }
+
+      .search-inner {
+        background: var(--wa-bg-gray);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        height: 35px;
+        transition: background-color 0.4s ease;
+      }
+
+      .search-inner input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        padding-left: 15px;
+        font-size: 0.9rem;
+        outline: none;
+        /* FIX: Ensure typed text is visible in dark mode */
+        color: var(--wa-dark-text);
+      }
+
+      .contact-list {
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .chat-row {
+        display: flex;
+        align-items: center;
+        height: 72px;
+        padding: 0 15px;
+        position: relative;
+        transition: background-color 0.2s ease;
+      }
+
+      .chat-row:hover {
+        background: var(--wa-hover);
+      }
+
+      .chat-link {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .avatar {
+        width: 49px;
+        height: 49px;
+        border-radius: 50%;
+        background: #dfe5e7;
+        margin-right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #adb5bd;
+        font-size: 1.4rem;
+      }
+
+      .chat-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .chat-name {
+        font-size: 1.05rem;
+        color: var(--wa-dark-text);
+        font-weight: 500;
+      }
+
+      .chat-preview {
+        font-size: 0.85rem;
+        color: var(--wa-secondary-text);
+      }
+
+      /* RESTORED DROPDOWN LOGIC CSS */
+      .chat-menu-icon {
+        cursor: pointer;
+        padding: 8px;
+        font-size: 14px;
+        color: var(--wa-secondary-text);
+      }
+
+      .chat-dropdown {
+        display: none;
+        position: absolute;
+        right: 10px;
+        top: 60px;
+        background: var(--wa-white);
+        border-radius: 6px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        min-width: 150px;
+        z-index: 100;
+        border: 1px solid var(--wa-border);
+      }
+
+      .chat-dropdown button {
+        width: 100%;
+        padding: 8px 12px;
+        border: none;
+        background: none;
+        text-align: left;
+        cursor: pointer;
+        color: var(--wa-dark-text);
+      }
+
+      .section-tag {
+        padding: 15px 16px;
+        font-size: 0.85rem;
+        color: var(--wa-teal);
+        font-weight: 600;
+      }
+
+      .logout-section {
+        padding: 15px;
+        border-top: 1px solid var(--wa-border);
+        background: var(--wa-bg-gray);
+        transition: background-color 0.4s ease;
+      }
+
+      .logout-btn {
+        width: 100%;
+        padding: 10px;
+        background: #e74c3c;
+        border: none;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .landing-view {
+        flex: 1;
+        background-color: var(--landing-bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        transition: background-color 0.4s ease;
+      }
+
+      @media (max-width: 768px) {
+        .landing-view {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app-wrapper">
+      <div class="sidebar">
+        <header class="header">
+  <div
+    class="avatar"
+    style="width: 40px; height: 40px; font-size: 1rem">
+    {{ request.user.username|slice:":1"|upper }}
+  </div>
+<div class="header-actions">
+
+  <i class="fas fa-moon" id="theme-toggle"></i>
+
+  <div class="settings-wrapper">
+
+    <i
+      class="fas fa-cog"
+      id="settings-icon"
+      title="Settings">
+    </i>
+
+    <div id="settings-menu" class="settings-dropdown">
+
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+
+        <button type="submit">
+          <i class="fas fa-right-from-bracket"></i>
+          Logout
+        </button>
+      </form>
+
+    </div>
+
+  </div>
+</div>
+</header>
+
+        <div class="search-area">
+          <form method="GET" class="search-inner">
+            <i
+              class="fas fa-search"
+              style="color: var(--wa-secondary-text)"></i>
+            <input
+              type="text"
+              name="q"
+              placeholder="Search or start new chat"
+              value="{{ request.GET.q|default:'' }}"
+              autocomplete="off" />
+          </form>
+        </div>
+
+        <div class="contact-list">
+          <div class="section-tag">CHATS</div>
+
+          {% for user in previous_users %}
+          <div class="chat-row">
+            <a href="/chat/{{ user.id }}/" class="chat-link">
+              <div class="avatar"><i class="fas fa-user"></i></div>
+              <div class="chat-body">
+                <span class="chat-name">{{ user.username }}</span>
+                <p class="chat-preview">Last message snippet here...</p>
+              </div>
+            </a>
+
+            <i
+              class="fas fa-ellipsis-vertical chat-menu-icon"
+              data-id="{{ user.id }}"></i>
+            <div class="chat-dropdown" id="chatMenu-{{ user.id }}">
+              <form method="POST" action="{% url 'delete_chat' user.id %}">
+                {% csrf_token %}
+                <button type="submit">Delete Chat</button>
+              </form>
+            </div>
+          </div>
+          {% empty %}
+          <div
+            style="
+              text-align: center;
+              padding: 40px;
+              color: var(--wa-secondary-text);
+            ">
+            No active conversations
+          </div>
+          {% endfor %} {% if search_results %}
+          <div class="section-tag">SEARCH RESULTS</div>
+          {% for user in search_results %}
+          <div class="chat-row">
+            <a href="/chat/{{ user.id }}/" class="chat-link">
+              <div
+                class="avatar"
+                style="background: var(--wa-teal); color: white">
+                <i class="fas fa-plus"></i>
+              </div>
+              <div class="chat-body">
+                <span class="chat-name">{{ user.username }}</span>
+                <p class="chat-preview">{{ user.email }}</p>
+              </div>
+            </a>
+          </div>
+          {% endfor %} {% endif %}
+        </div>
+
+        <!-- <div class="logout-section">
+          <form method="POST" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">
+              <i class="fas fa-right-from-bracket"></i> Logout
+            </button>
+          </form>
+        </div>
+      </div> -->
+      </div>
+
+      <div class="landing-view">
+        <h1 style="color: var(--wa-dark-text); font-weight: 300">BitTalk<br>(The realtime Chat Application)</h1>
+      </div>
+    </div>
+
+    <script>
+      const themeToggle = document.getElementById("theme-toggle");
+
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.classList.replace("fa-moon", "fa-sun");
+      }
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        const isDark = document.body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+
+        if (isDark) {
+          themeToggle.classList.replace("fa-moon", "fa-sun");
+        } else {
+          themeToggle.classList.replace("fa-sun", "fa-moon");
+        }
+      });
+
+      // ORIGINAL LOGIC: Dropdown interactions
+      document.querySelectorAll(".chat-menu-icon").forEach((icon) => {
+        icon.addEventListener("click", function (e) {
+          e.stopPropagation();
+          const id = this.dataset.id;
+          const menu = document.getElementById("chatMenu-" + id);
+
+          document.querySelectorAll(".chat-dropdown").forEach((m) => {
+            if (m !== menu) m.style.display = "none";
+          });
+
+          menu.style.display =
+            menu.style.display === "block" ? "none" : "block";
+        });
+      });
+
+      const settingsIcon = document.getElementById("settings-icon");
+
+const settingsMenu = document.getElementById("settings-menu");
+
+settingsIcon.addEventListener("click", function (e) {
+  e.stopPropagation();
+
+  settingsMenu.style.display =
+    settingsMenu.style.display === "block"
+      ? "none"
+      : "block";
+});
+document.addEventListener("click", () => {
+
+  document
+    .querySelectorAll(".chat-dropdown")
+    .forEach((m) => (m.style.display = "none"));
+
+  settingsMenu.style.display = "none";
+});
+    </script>
+  </body>
+</html>
