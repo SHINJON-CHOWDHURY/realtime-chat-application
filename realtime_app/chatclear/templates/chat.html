@@ -233,6 +233,22 @@
         background: var(--wa-white);
       }
 
+      @keyframes pulseRing {
+        0% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.15);
+        }
+
+        70% {
+          transform: scale(1.03);
+          box-shadow: 0 0 0 22px rgba(255, 255, 255, 0);
+        }
+
+        100% {
+          transform: scale(1);
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+      }
       #send-btn {
         background: none;
         border: none;
@@ -379,8 +395,6 @@
         }
       });
 
-
-
       /* ===== WebSocket ===== */
       const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
@@ -489,8 +503,12 @@
             await peerConnection.addIceCandidate(pendingCandidates.shift());
           }
 
-          document.getElementById("call-container").style.display = "block";
-
+          if (window.callType === "video") {
+            document.getElementById("call-container").style.display = "block";
+          } else {
+            document.getElementById("audio-call-container").style.display =
+              "block";
+          }
           return;
         }
 
@@ -596,18 +614,32 @@
           audio: true,
         });
 
-        // Show video UI only for video call
+        // VIDEO CALL UI
         if (video) {
+          document.getElementById("call-container").style.display = "block";
+
           document.getElementById("localVideo").style.display = "block";
           document.getElementById("remoteVideo").style.display = "block";
-        } else {
+
+          document.getElementById("audio-call-container").style.display =
+            "none";
+        }
+
+        // AUDIO CALL UI
+        else {
+          document.getElementById("call-container").style.display = "none";
+
+          document.getElementById("audio-call-container").style.display =
+            "block";
+
           document.getElementById("localVideo").style.display = "none";
           document.getElementById("remoteVideo").style.display = "none";
         }
 
-        // Show call screen
-        document.getElementById("call-container").style.display = "block";
-        document.getElementById("localVideo").srcObject = localStream;
+        // Set local video only for video calls
+        if (video) {
+          document.getElementById("localVideo").srcObject = localStream;
+        }
 
         peerConnection = new RTCPeerConnection(config);
 
@@ -618,7 +650,15 @@
 
         // Receive remote stream
         peerConnection.ontrack = (event) => {
-          document.getElementById("remoteVideo").srcObject = event.streams[0];
+          // VIDEO CALL
+          if (window.callType === "video") {
+            document.getElementById("remoteVideo").srcObject = event.streams[0];
+          }
+
+          // AUDIO CALL
+          else {
+            document.getElementById("remoteAudio").srcObject = event.streams[0];
+          }
 
           startCallTimer();
         };
@@ -658,17 +698,29 @@
         });
 
         // Video / Audio UI
+        // VIDEO CALL UI
         if (window.callType === "video") {
+          document.getElementById("call-container").style.display = "block";
+
+          document.getElementById("audio-call-container").style.display =
+            "none";
+
           document.getElementById("localVideo").style.display = "block";
           document.getElementById("remoteVideo").style.display = "block";
-        } else {
+
+          document.getElementById("localVideo").srcObject = localStream;
+        }
+
+        // AUDIO CALL UI
+        else {
+          document.getElementById("call-container").style.display = "none";
+
+          document.getElementById("audio-call-container").style.display =
+            "block";
+
           document.getElementById("localVideo").style.display = "none";
           document.getElementById("remoteVideo").style.display = "none";
         }
-
-        document.getElementById("call-container").style.display = "block";
-
-        document.getElementById("localVideo").srcObject = localStream;
 
         peerConnection = new RTCPeerConnection(config);
 
@@ -681,7 +733,15 @@
         peerConnection.ontrack = (event) => {
           console.log("Remote stream received");
 
-          document.getElementById("remoteVideo").srcObject = event.streams[0];
+          // VIDEO CALL
+          if (window.callType === "video") {
+            document.getElementById("remoteVideo").srcObject = event.streams[0];
+          }
+
+          // AUDIO CALL
+          else {
+            document.getElementById("remoteAudio").srcObject = event.streams[0];
+          }
 
           startCallTimer();
         };
@@ -737,11 +797,20 @@
         );
       }
       function rejectCall() {
+        socket.send(
+          JSON.stringify({
+            type: "call_ended",
+          }),
+        );
+
         const ringtone = document.getElementById("ringtone");
+
         ringtone.pause();
         ringtone.currentTime = 0;
 
         document.getElementById("incoming-call").style.display = "none";
+
+        cleanupCall();
       }
 
       function startCallTimer() {
@@ -751,9 +820,12 @@
         }
 
         callSeconds = 0;
+        clearInterval(callTimerInterval);
 
-        const timerElement = document.getElementById("call-timer");
-
+        const timerElement =
+          window.callType === "audio"
+            ? document.getElementById("audio-call-timer")
+            : document.getElementById("call-timer");
         callTimerInterval = setInterval(() => {
           callSeconds++;
 
@@ -774,25 +846,41 @@
 
         const audioTrack = audioTracks[0];
 
-        // Toggle mic
+        // Toggle microphone
         audioTrack.enabled = !audioTrack.enabled;
 
-        const muteBtn = document.getElementById("mute-btn");
+        // VIDEO CALL BUTTON
+        const videoMuteBtn = document.getElementById("mute-btn");
 
-        if (!muteBtn) return;
+        // AUDIO CALL BUTTON
+        const audioMuteBtn = document.getElementById("audio-mute-btn");
 
-        // Update UI
+        // MIC ON
         if (audioTrack.enabled) {
           isMuted = false;
 
-          muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
-        } else {
+          if (videoMuteBtn) {
+            videoMuteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+          }
+
+          if (audioMuteBtn) {
+            audioMuteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+          }
+        }
+
+        // MIC OFF
+        else {
           isMuted = true;
 
-          muteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+          if (videoMuteBtn) {
+            videoMuteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+          }
+
+          if (audioMuteBtn) {
+            audioMuteBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+          }
         }
       }
-
       function toggleCamera() {
         if (!localStream) return;
 
@@ -826,13 +914,19 @@
         callTimerInterval = null;
 
         document.getElementById("call-timer").innerText = "00:00";
+        document.getElementById("audio-call-timer").innerText = "00:00";
         isMuted = false;
 
         //  document.getElementById("mute-btn").innerText = "🎤";
-        const muteBtn = document.getElementById("mute-btn");
+        const videoMuteBtn = document.getElementById("mute-btn");
+        const audioMuteBtn = document.getElementById("audio-mute-btn");
 
-        if (muteBtn) {
-          muteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        if (videoMuteBtn) {
+          videoMuteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        }
+
+        if (audioMuteBtn) {
+          audioMuteBtn.innerHTML = '<i class="fas fa-microphone"></i>';
         }
 
         isCameraOff = false;
@@ -849,6 +943,7 @@
 
         // Hide call UI
         document.getElementById("call-container").style.display = "none";
+        document.getElementById("audio-call-container").style.display = "none";
 
         // Stop local camera + mic completely
         if (localStream) {
@@ -861,6 +956,15 @@
 
         // Stop remote stream if exists
         const remoteVideo = document.getElementById("remoteVideo");
+        const remoteAudio = document.getElementById("remoteAudio");
+
+        if (remoteAudio.srcObject) {
+          remoteAudio.srcObject.getTracks().forEach((track) => {
+            track.stop();
+          });
+
+          remoteAudio.srcObject = null;
+        }
 
         if (remoteVideo.srcObject) {
           remoteVideo.srcObject.getTracks().forEach((track) => {
@@ -921,11 +1025,13 @@
       <video
         id="remoteVideo"
         autoplay
+        playsinline
         style="width: 100%; height: 100%; object-fit: cover"></video>
 
       <video
         id="localVideo"
         autoplay
+        playsinline
         muted
         style="
           width: 22vw;
@@ -1056,8 +1162,8 @@
         <button
           onclick="endCall()"
           style="
-            width: 50px;
-            height: 50px;
+            width: 55px;
+            height: 56px;
 
             border: none;
             border-radius: 50%;
@@ -1105,6 +1211,209 @@
         Reject
       </button>
     </div>
+    <!-- AUDIO CALL SCREEN -->
+    <div
+      id="audio-call-container"
+      style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+
+        background: linear-gradient(180deg, #243447 0%, #1b2838 100%);
+
+        overflow: hidden;
+      ">
+      <!-- Background Circle -->
+      <div
+        style="
+          position: absolute;
+          width: 500px;
+          height: 500px;
+
+          border-radius: 50%;
+
+          background: rgba(255, 255, 255, 0.03);
+
+          top: -180px;
+          left: -120px;
+        "></div>
+
+      <!-- Content -->
+      <div
+        style="
+          height: 100%;
+
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          padding-top: 80px;
+        ">
+        <!-- Avatar Animation -->
+        <div
+          style="
+            width: 170px;
+            height: 170px;
+
+            border-radius: 50%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 255, 255, 0.08);
+
+            animation: pulseRing 2s infinite;
+          ">
+          <div
+            style="
+              width: 145px;
+              height: 145px;
+
+              border-radius: 50%;
+
+              background: #00a884;
+
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              font-size: 62px;
+              font-weight: bold;
+              color: white;
+
+              border: 4px solid rgba(255, 255, 255, 0.3);
+            ">
+            {{ other_user.username|slice:":1"|upper }}
+          </div>
+        </div>
+
+        <!-- Username -->
+        <div
+          style="
+            margin-top: 25px;
+
+            color: white;
+            font-size: 44px;
+            font-weight: 500;
+          ">
+          {{ other_user.username }}
+        </div>
+
+        <!-- Call Type -->
+        <div
+          style="
+            margin-top: 10px;
+
+            color: rgba(255, 255, 255, 0.6);
+
+            font-size: 22px;
+          ">
+          Audio Call
+        </div>
+
+        <!-- Timer -->
+        <div
+          id="audio-call-timer"
+          style="
+            margin-top: 15px;
+
+            color: rgba(255, 255, 255, 0.75);
+
+            font-size: 35px;
+            font-weight: 300;
+
+            letter-spacing: 3px;
+          ">
+          00:00
+        </div>
+
+        <!-- Bottom Controls -->
+<div
+  id="audio-call-controls"
+  style="
+    margin-top: auto;
+    margin-bottom: 30px;
+
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    background: rgba(255, 255, 255, 0.15);
+
+    backdrop-filter: blur(25px) saturate(200%);
+    -webkit-backdrop-filter: blur(25px) saturate(200%);
+
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    padding: 10px 15px;
+
+    border-radius: 50px;
+
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  "
+>
+  <!-- Mic Button -->
+  <button
+    id="audio-mute-btn"
+    onclick="toggleMute()"
+    style="
+      width: 55px;
+      height: 55px;
+
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+
+      background: rgba(255, 255, 255, 0.2);
+
+      color: white;
+      font-size: 24px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+      cursor: pointer;
+      transition: 0.3s;
+    "
+  >
+    <i class="fas fa-microphone"></i>
+  </button>
+
+  <!-- End Call -->
+  <button
+    onclick="endCall()"
+    style="
+      width: 55px;
+      height: 55px;
+
+      border: 1px solid rgba(255, 59, 48, 0.5);
+      border-radius: 50%;
+
+      background: rgba(255, 59, 48, 0.6);
+
+      color: white;
+      font-size: 26px;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      cursor: pointer;
+
+      box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+
+      transition: 0.3s;
+    "
+  >
+    <i class="fas fa-phone-slash"></i>
+  </button>
+</div>
+    </div>
+    <audio id="remoteAudio" autoplay playsinline></audio>
     <audio id="ringtone" loop>
       <source
         src="https://actions.google.com/sounds/v1/alarms/phone_alerts_and_rings.ogg"

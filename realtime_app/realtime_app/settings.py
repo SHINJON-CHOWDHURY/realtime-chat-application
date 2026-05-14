@@ -18,11 +18,11 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "terrorism-rpg-political-anatomy.trycloudflare.com",
+    "hanging-merit-attend-arbitrary.trycloudflare.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://terrorism-rpg-political-anatomy.trycloudflare.com"
+    "https://hanging-merit-attend-arbitrary.trycloudflare.com"
 ]
 # Application definition
 
