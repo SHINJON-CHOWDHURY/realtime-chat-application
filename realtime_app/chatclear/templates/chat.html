@@ -609,6 +609,10 @@
       async function startCall(video = true) {
         pendingCandidates = [];
         remoteDescriptionSet = false;
+        const ringtone = document.getElementById("ringtone");
+
+ringtone.pause();
+ringtone.currentTime = 0;
         localStream = await navigator.mediaDevices.getUserMedia({
           video: video,
           audio: true,
@@ -692,6 +696,10 @@
       pendingCandidates = [];
       remoteDescriptionSet = false;
       async function handleOffer(offer) {
+      const ringtone = document.getElementById("ringtone");
+
+ringtone.pause();
+ringtone.currentTime = 0;
         localStream = await navigator.mediaDevices.getUserMedia({
           video: window.callType === "video",
           audio: true,
@@ -786,6 +794,10 @@
 
       function acceptCall() {
         console.log("Accept clicked");
+        const ringtone = document.getElementById("ringtone");
+
+ringtone.pause();
+ringtone.currentTime = 0;
 
         document.getElementById("incoming-call").style.display = "none";
 
