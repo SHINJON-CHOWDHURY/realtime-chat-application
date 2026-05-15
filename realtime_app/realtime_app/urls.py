@@ -3,13 +3,14 @@
 
 
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from chatclear import views
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
+    
+path('accounts/', include('allauth.urls')),
     # Home
     path('', views.home_view, name='home'),
 

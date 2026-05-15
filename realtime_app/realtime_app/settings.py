@@ -18,11 +18,12 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "hanging-merit-attend-arbitrary.trycloudflare.com",
+    "abc123.trycloudflare.com",
+    "steal-theaters-soviet-defendant.trycloudflare.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://hanging-merit-attend-arbitrary.trycloudflare.com"
+"https://abc123.trycloudflare.com",
 ]
 # Application definition
 
@@ -33,6 +34,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+       'allauth.account',
+       'allauth.socialaccount',
+       'allauth.socialaccount.providers.google',
 
     'channels',
     'chatclear',
@@ -46,6 +52,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 ROOT_URLCONF = 'realtime_app.urls'
@@ -135,3 +147,12 @@ CHANNEL_LAYERS = {
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+SITE_ID = 1
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login/'
+
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
