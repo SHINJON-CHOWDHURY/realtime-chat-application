@@ -1,5 +1,6 @@
 
-
+import os
+import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -13,14 +14,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^+zc+289wowx2l5ypn=dgx-raxy^=q(it@)4k5!!5!$be76-y1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+# ALLOWED_HOSTS = [
+#     "127.0.0.1",
+#     "localhost",
+#     "abc123.trycloudflare.com",
+#     "steal-theaters-soviet-defendant.trycloudflare.com",
+# ]
 
-ALLOWED_HOSTS = [
-    "127.0.0.1",
-    "localhost",
-    "abc123.trycloudflare.com",
-    "steal-theaters-soviet-defendant.trycloudflare.com",
-]
+ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
 "https://abc123.trycloudflare.com",
@@ -46,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -149,10 +152,16 @@ LOGOUT_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
 SITE_ID = 1
 
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+# LOGIN_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/login/'
 
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
