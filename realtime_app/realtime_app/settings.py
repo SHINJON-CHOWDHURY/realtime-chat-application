@@ -15,17 +15,16 @@ SECRET_KEY = 'django-insecure-^+zc+289wowx2l5ypn=dgx-raxy^=q(it@)4k5!!5!$be76-y1
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
-# ALLOWED_HOSTS = [
-#     "127.0.0.1",
-#     "localhost",
-#     "abc123.trycloudflare.com",
-#     "steal-theaters-soviet-defendant.trycloudflare.com",
-# ]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "owner-emission-redeem-across.trycloudflare.com",
+]
 
 ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-"https://abc123.trycloudflare.com",
+    "https://owner-emission-redeem-across.trycloudflare.com",
 ]
 # Application definition
 

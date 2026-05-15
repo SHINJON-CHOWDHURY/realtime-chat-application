@@ -386,7 +386,7 @@
 
       .signup-link {
         color: #aab3bf;
-
+       padding-top: 10px;
         margin-bottom: 50px;
       }
 
@@ -531,6 +531,7 @@
         margin-bottom: 30px;
 
         color: #b8c0cc;
+        /* display: none; */
       }
 
       .options-row a {
@@ -576,6 +577,7 @@
         margin: 18px 0;
 
         color: #6b7280;
+        display: none;
       }
 
       .divider::before,
@@ -589,7 +591,7 @@
         background: rgba(255, 255, 255, 0.1);
       }
 
-      .google-btn {
+      #google-btn {
         width: 100%;
 
         height: 58px;
@@ -613,9 +615,10 @@
 
         transition: 0.3s;
         text-decoration: none;
+        /* display: none; */
       }
 
-      .google-btn:hover {
+      #google-btn:hover {
         background: #00cdb3;
       }
 
@@ -703,10 +706,10 @@
 
         <h1 class="signin-title">Sign in to BitTalk</h1>
 
-        <p class="signup-link">
+        <!-- <p class="signup-link">
           No account?
           <a href="{% url 'register' %}"> Create one free → </a>
-        </p>
+        </p> -->
 
         {% if messages %} {% for message in messages %}
         <div class="error-box">{{ message }}</div>
@@ -750,20 +753,19 @@
           </div>
 
           <div class="options-row">
-            <label> <input type="checkbox" /> Remember me </label>
+            <!-- <label> <input />  </label> -->
 
-            <a href="#">Forgot password?</a>
+            <a href="#"></a>
           </div>
 
-          <button type="submit" class="login-btn">Sign in</button>
+          <button type="submit" class="login-btn">Login</button>
+          <div></div>
         </form>
 
         <div class="divider">or continue with</div>
+        <p class="signup-link" id="no-account">No account?</p>
 
-        <a href="/accounts/google/login/" class="google-btn">
-          <i class="fab fa-google"></i>
-          Google
-        </a>
+        <a href="{% url 'register' %}" id="google-btn"> Create Account</a>
       </div>
     </div>
 
