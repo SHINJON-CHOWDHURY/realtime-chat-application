@@ -1,427 +1,391 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
+  <head>
+    <meta charset="UTF-8" />
 
-<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
 
-<title>Edit Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 
-<link
-rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-<style>
+      body {
+        font-family: "Segoe UI", sans-serif;
 
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
+        min-height: 100vh;
 
-body{
+        background: linear-gradient(135deg, #0f172a, #1e293b);
 
-  font-family:"Segoe UI",sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-  min-height:100vh;
+        padding: 20px;
+      }
 
-  background:
-    linear-gradient(
-      135deg,
-      #0f172a,
-      #1e293b
-    );
+      .profile-card {
+        width: 100%;
+        max-width: 500px;
 
-  display:flex;
-  justify-content:center;
-  align-items:center;
+        background: rgba(255, 255, 255, 0.08);
 
-  padding:20px;
-}
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
 
-.profile-card{
+        border: 1px solid rgba(255, 255, 255, 0.15);
 
-  width:100%;
-  max-width:500px;
+        border-radius: 30px;
 
-  background:
-    rgba(255,255,255,0.08);
+        padding: 30px 25px;
 
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+      }
 
-  border:
-    1px solid rgba(255,255,255,0.15);
+      .profile-title {
+        color: white;
 
-  border-radius:30px;
+        font-size: 32px;
+        font-weight: 700;
 
-  padding:30px 25px;
+        text-align: center;
 
-  box-shadow:
-    0 8px 32px rgba(0,0,0,0.35);
-}
+        margin-bottom: 28px;
+      }
 
-.profile-title{
+      .profile-preview-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
 
-  color:white;
+        gap: 22px;
+      }
 
-  font-size:32px;
-  font-weight:700;
+      .profile-avatar {
+        width: 150px;
+        height: 150px;
 
-  text-align:center;
+        border-radius: 50%;
 
-  margin-bottom:28px;
-}
+        overflow: hidden;
 
-.drop-zone{
+        border: 4px solid #00a884;
 
-  width:100%;
-  min-height:230px;
+        background: rgba(255, 255, 255, 0.08);
 
-  border:
-    2px dashed rgba(255,255,255,0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
-  border-radius:24px;
+        position: relative;
 
-  display:flex;
-  flex-direction:column;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      }
 
-  justify-content:center;
-  align-items:center;
+      .preview-image {
+        width: 100%;
+        height: 100%;
 
-  gap:12px;
+        object-fit: cover;
 
-  cursor:pointer;
+        position: absolute;
+        inset: 0;
 
-  transition:0.3s;
+        display: none;
+      }
 
-  overflow:hidden;
+      #defaultAvatar {
+        font-size: 56px;
+        font-weight: 700;
 
-  position:relative;
-}
+        color: white;
+      }
 
-.drop-zone:hover{
+      .drop-zone {
+        width: 100%;
+        min-height: 140px;
+        border: 2px dashed rgba(255, 255, 255, 0.3);
 
-  border-color:#00a884;
+        border-radius: 24px;
 
-  background:
-    rgba(255,255,255,0.04);
-}
+        display: flex;
+        flex-direction: column;
 
-.drop-zone.dragover{
+        justify-content: center;
+        align-items: center;
 
-  border-color:#00a884;
+        gap: 12px;
 
-  transform:scale(1.02);
+        cursor: pointer;
 
-  background:
-    rgba(0,168,132,0.12);
-}
+        transition: 0.3s;
 
-.drop-zone i{
+        overflow: hidden;
 
-  color:white;
+        position: relative;
+      }
 
-  font-size:58px;
-}
+      .drop-zone:hover {
+        border-color: #00a884;
 
-.drop-zone p{
+        background: rgba(255, 255, 255, 0.04);
+      }
 
-  color:
-    rgba(255,255,255,0.82);
+      .drop-zone.dragover {
+        border-color: #00a884;
 
-  text-align:center;
+        transform: scale(1.02);
 
-  line-height:1.6;
-}
+        background: rgba(0, 168, 132, 0.12);
+      }
 
-.preview-image{
+      .drop-zone i {
+        color: white;
 
-  width:100%;
-  height:100%;
+        font-size: 58px;
+      }
 
-  object-fit:cover;
+      .drop-zone p {
+        color: rgba(255, 255, 255, 0.82);
 
-  position:absolute;
-  inset:0;
+        text-align: center;
 
-  display:none;
-}
+        line-height: 1.6;
+      }
 
-.input-group{
+      .preview-image {
+        width: 100%;
+        height: 100%;
 
-  margin-top:24px;
-}
+        object-fit: cover;
 
-.input-group label{
+        position: absolute;
+        inset: 0;
 
-  display:block;
+        display: none;
+      }
 
-  color:white;
+      .input-group {
+        margin-top: 24px;
+      }
 
-  margin-bottom:10px;
+      .input-group label {
+        display: block;
 
-  font-size:15px;
-}
+        color: white;
 
-.input-group input{
+        margin-bottom: 10px;
 
-  width:100%;
+        font-size: 15px;
+      }
 
-  height:56px;
+      .input-group input {
+        width: 100%;
 
-  border:none;
-  outline:none;
+        height: 56px;
 
-  border-radius:18px;
+        border: none;
+        outline: none;
 
-  background:
-    rgba(255,255,255,0.1);
+        border-radius: 18px;
 
-  color:white;
+        background: rgba(255, 255, 255, 0.1);
 
-  padding:0 18px;
+        color: white;
 
-  font-size:16px;
-}
+        padding: 0 18px;
 
-.save-btn{
+        font-size: 16px;
+      }
 
-  width:100%;
-  height:58px;
+      .save-btn {
+        width: 100%;
+        height: 58px;
 
-  border:none;
-  border-radius:18px;
+        border: none;
+        border-radius: 18px;
 
-  background:#00a884;
+        background: #00a884;
 
-  color:white;
+        color: white;
 
-  font-size:18px;
-  font-weight:600;
+        font-size: 18px;
+        font-weight: 600;
 
-  margin-top:28px;
+        margin-top: 28px;
 
-  cursor:pointer;
+        cursor: pointer;
 
-  transition:0.3s;
-}
+        transition: 0.3s;
+      }
 
-.save-btn:hover{
+      .save-btn:hover {
+        transform: translateY(-2px);
 
-  transform:translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 168, 132, 0.35);
+      }
 
-  box-shadow:
-    0 8px 20px rgba(0,168,132,0.35);
-}
+      .hidden-input {
+        display: none;
+      }
 
-.hidden-input{
-  display:none;
-}
+      @media (max-width: 768px) {
+        .profile-card {
+          padding: 24px 18px;
+        }
 
-@media(max-width:768px){
+        .profile-title {
+          font-size: 27px;
+        }
 
-  .profile-card{
-    padding:24px 18px;
-  }
+        .drop-zone {
+          min-height: 200px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <form method="POST" enctype="multipart/form-data" class="profile-card">
+      {% csrf_token %}
 
-  .profile-title{
-    font-size:27px;
-  }
+      <div class="profile-title">Edit Profile</div>
 
-  .drop-zone{
-    min-height:200px;
-  }
-}
+      <div class="profile-preview-wrapper">
+        <div class="profile-avatar">
+          {% if profile.profile_picture %}
 
-</style>
-</head>
-<body>
+          <img
+            id="preview"
+            class="preview-image"
+            src="{{ profile.profile_picture.url }}"
+            style="display: block" />
 
-<form
-method="POST"
-enctype="multipart/form-data"
-class="profile-card">
+          {% else %}
 
-{% csrf_token %}
+          <div id="defaultAvatar">
+            {{ request.user.username|slice:":1"|upper }}
+          </div>
 
-<div class="profile-title">
-  Edit Profile
-</div>
+          <img id="preview" class="preview-image" />
 
-<div
-class="drop-zone"
-id="dropZone">
+          {% endif %}
+        </div>
 
-  <img
-    id="preview"
-    class="preview-image"
+        <div class="drop-zone" id="dropZone">
+          <i class="fas fa-cloud-upload-alt"></i>
 
-    {% if profile.profile_picture %}
-      src="{{ profile.profile_picture.url }}"
-      style="display:block;"
-    {% endif %}
-  >
+          <p>
+            Drag & Drop Image<br />
+            or Click To Browse
+          </p>
 
-  <i class="fas fa-cloud-upload-alt"></i>
+          <input
+            type="file"
+            name="profile_picture"
+            id="fileInput"
+            accept="image/*"
+            class="hidden-input" />
+        </div>
+      </div>
 
-  <p>
-    Drag & Drop Image Here<br>
-    or Click To Browse
-  </p>
+      <div class="input-group">
+        <label>Edit Name</label>
 
-  <input
-    type="file"
-    name="profile_picture"
-    id="fileInput"
-    accept="image/*"
-    class="hidden-input">
+        <input
+          type="text"
+          name="username"
+          value="{{ request.user.username }}"
+          required />
+      </div>
 
-</div>
+      <button type="submit" class="save-btn">Save Changes</button>
+    </form>
 
-<div class="input-group">
+    <script>
+      const dropZone = document.getElementById("dropZone");
 
-  <label>Edit Name</label>
+      const fileInput = document.getElementById("fileInput");
 
-  <input
-    type="text"
-    name="username"
-    value="{{ request.user.username }}"
-    required>
+      const preview = document.getElementById("preview");
 
-</div>
+      // CLICK
 
-<button
-type="submit"
-class="save-btn">
+      dropZone.onclick = () => {
+        fileInput.click();
+      };
 
-  Save Changes
+      // FILE SELECT
 
-</button>
+      fileInput.addEventListener("change", handleFiles);
 
-</form>
+      // DRAG ENTER
 
-<script>
+      ["dragenter", "dragover"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
 
-const dropZone =
-  document.getElementById("dropZone");
+          dropZone.classList.add("dragover");
+        });
+      });
 
-const fileInput =
-  document.getElementById("fileInput");
+      // DRAG LEAVE
 
-const preview =
-  document.getElementById("preview");
+      ["dragleave", "drop"].forEach((eventName) => {
+        dropZone.addEventListener(eventName, (e) => {
+          e.preventDefault();
 
-// CLICK
+          dropZone.classList.remove("dragover");
+        });
+      });
 
-dropZone.onclick = () => {
-  fileInput.click();
-};
+      // DROP IMAGE
 
-// FILE SELECT
+      dropZone.addEventListener("drop", (e) => {
+        const files = e.dataTransfer.files;
 
-fileInput.addEventListener(
-  "change",
-  handleFiles
-);
+        if (files.length) {
+          fileInput.files = files;
 
-// DRAG ENTER
+          previewFile(files[0]);
+        }
+      });
 
-[
-  "dragenter",
-  "dragover"
-].forEach(eventName => {
+      function handleFiles() {
+        if (fileInput.files.length) {
+          previewFile(fileInput.files[0]);
+        }
+      }
 
-  dropZone.addEventListener(
-    eventName,
-    e => {
+      function previewFile(file) {
+        if (!file.type.startsWith("image/")) {
+          alert("Please select an image file.");
 
-      e.preventDefault();
+          return;
+        }
 
-      dropZone.classList.add(
-        "dragover"
-      );
-    }
-  );
-});
+        const reader = new FileReader();
 
-// DRAG LEAVE
+        reader.onload = (e) => {
+          preview.src = e.target.result;
 
-[
-  "dragleave",
-  "drop"
-].forEach(eventName => {
+          preview.style.display = "block";
+          const defaultAvatar = document.getElementById("defaultAvatar");
 
-  dropZone.addEventListener(
-    eventName,
-    e => {
+          if (defaultAvatar) {
+            defaultAvatar.style.display = "none";
+          }
+        };
 
-      e.preventDefault();
-
-      dropZone.classList.remove(
-        "dragover"
-      );
-    }
-  );
-});
-
-// DROP IMAGE
-
-dropZone.addEventListener(
-  "drop",
-  e => {
-
-    const files =
-      e.dataTransfer.files;
-
-    if(files.length){
-
-      fileInput.files = files;
-
-      previewFile(files[0]);
-    }
-  }
-);
-
-function handleFiles(){
-
-  if(fileInput.files.length){
-
-    previewFile(
-      fileInput.files[0]
-    );
-  }
-}
-
-function previewFile(file){
-
-  if(
-    !file.type.startsWith("image/")
-  ){
-
-    alert(
-      "Please select an image file."
-    );
-
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = e => {
-
-    preview.src = e.target.result;
-
-    preview.style.display = "block";
-  };
-
-  reader.readAsDataURL(file);
-}
-
-</script>
-
-</body>
+        reader.readAsDataURL(file);
+      }
+    </script>
+  </body>
 </html>

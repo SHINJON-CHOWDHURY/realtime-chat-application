@@ -18,13 +18,13 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "gained-warren-jewel-resolution.trycloudflare.com",
+    "founder-coins-forming-feof.trycloudflare.com",
 ]
 
 ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://gained-warren-jewel-resolution.trycloudflare.com",
+    "https://founder-coins-forming-feof.trycloudflare.com",
 ]
 # Application definition
 

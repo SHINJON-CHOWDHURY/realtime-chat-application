@@ -13,15 +13,58 @@
 
     <style>
       :root {
-        --wa-teal: #00a884;
-        --wa-bg-gray: #f0f2f5;
-        --wa-border: #e9edef;
-        --wa-my-msg: #d9fdd3;
-        --wa-white: #ffffff;
-        --wa-text-sub: #667781;
-        --wa-blue-tick: #53bdeb;
-        --text-main: #111b21;
-      }
+
+  --wa-teal:#00a884;
+
+  --bg-main:#efeae2;
+
+  --bg-header:#f0f2f5;
+
+  --bg-chat:#ffffff;
+
+  --bg-received:#ffffff;
+
+  --bg-sent:#d9fdd3;
+
+  --text-main:#111b21;
+
+  --text-sub:#667781;
+
+  --border:#e9edef;
+
+  --menu-bg:#ffffff;
+
+  --input-bg:#ffffff;
+
+  --shadow:
+    0 1px 2px rgba(0,0,0,0.08);
+}
+
+body.dark-mode {
+
+  --bg-main:#0b141a;
+
+  --bg-header:#202c33;
+
+  --bg-chat:#111b21;
+
+  --bg-received:#202c33;
+
+  --bg-sent:#005c4b;
+
+  --text-main:#e9edef;
+
+  --text-sub:#8696a0;
+
+  --border:#2a3942;
+
+  --menu-bg:#233138;
+
+  --input-bg:#2a3942;
+
+  --shadow:
+    0 1px 3px rgba(0,0,0,0.35);
+}
 
       body.dark-mode {
         --wa-bg-gray: #202c33;
@@ -40,7 +83,7 @@
 
       body {
         font-family: "Segoe UI", Helvetica, sans-serif;
-        background: #d1d7db;
+       background: var(--bg-main);
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -55,7 +98,7 @@
         width: 100%;
         max-width: 1600px;
         height: 100vh;
-        background-color: #efeae2;
+       background-color: var(--bg-main);
         background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
         display: flex;
         flex-direction: column;
@@ -71,6 +114,7 @@
         position: sticky;
         top: 0;
         z-index: 999;
+        color: var(--text-main);
       }
 
       .back-btn {
@@ -80,18 +124,55 @@
         text-decoration: none;
       }
 
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--wa-teal);
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 12px;
-        font-weight: bold;
-      }
+      .chat-avatar {
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    position:relative;
+
+    background: var(--wa-teal);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-right:12px;
+
+    color:white;
+    font-weight:700;
+
+    flex-shrink:0;
+}
+
+.chat-avatar img {
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+}
+
+.online-dot {
+
+    width:12px;
+    height:12px;
+
+    border-radius:50%;
+
+    background:#25d366;
+
+    border:2px solid #111b21;
+
+    position:absolute;
+
+    bottom:2px;
+    right:2px;
+}
 
       .username {
         font-weight: 500;
@@ -109,7 +190,7 @@
         position: absolute;
         right: 0;
         top: 35px;
-        background: white;
+       background: var(--menu-bg);
         border-radius: 6px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         padding: 6px 0;
@@ -124,6 +205,7 @@
         background: none;
         text-align: left;
         cursor: pointer;
+        color: var(--text-main);
       }
 
       .menu-dropdown button:hover {
@@ -157,13 +239,13 @@ overflow-wrap: break-word;
 
       .sent {
         align-self: flex-end;
-        background: var(--wa-my-msg);
+       background: var(--bg-sent);
         border-radius: 8px 0 8px 8px;
       }
 
       .received {
         align-self: flex-start;
-        background: var(--wa-white);
+       background: var(--bg-received);
         border-radius: 0 8px 8px 8px;
       }
 
@@ -179,7 +261,7 @@ overflow-wrap: break-word;
         position: absolute;
         right: 0;
         top: 20px;
-        background: white;
+       background: var(--menu-bg);
         border-radius: 6px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         padding: 6px 0;
@@ -194,16 +276,17 @@ overflow-wrap: break-word;
         background: none;
         text-align: left;
         cursor: pointer;
+        color: var(--text-main);
       }
 
       .msg-dropdown button:hover {
-        background: #f2f2f2;
+       background: rgba(255,255,255,0.08);
       }
 
       #messageBox {
         height: 62px;
 
-        background: var(--wa-bg-gray);
+       background: var(--bg-header);
 
         display: flex;
         align-items: center;
@@ -235,8 +318,13 @@ overflow-wrap: break-word;
         padding: 10px 15px;
         outline: none;
         font-size: 0.95rem;
-        background: var(--wa-white);
+       background: var(--input-bg);
+       color: var(--text-main);
       }
+      .input-box::placeholder {
+
+       color: var(--text-sub);
+       }
 
       /* INCOMING CALL */
       @keyframes incomingSlideUp {
@@ -675,7 +763,7 @@ margin-top: 8px;
         background: none;
         border: none;
         cursor: pointer;
-        color: #54656f;
+       color: var(--text-sub);
         font-size: 1.3rem;
       }
     </style>
@@ -691,7 +779,23 @@ margin-top: 8px;
     <div class="app-container">
       <header>
         <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-        <div class="avatar">{{ other_user.username|slice:":1"|upper }}</div>
+<div class="chat-avatar">
+
+    {% if other_user.userprofile.profile_picture %}
+
+        <img
+            src="{{ other_user.userprofile.profile_picture.url }}"
+            alt="profile">
+
+    {% else %}
+
+        {{ other_user.username|slice:":1"|upper }}
+
+    {% endif %}
+
+    <div class="online-dot"></div>
+
+</div>
         <span class="username">{{ other_user.username }}</span>
         <div
           style="
