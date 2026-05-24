@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Edit Profile</title>
+
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+
+  font-family:"Segoe UI",sans-serif;
+
+  min-height:100vh;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0f172a,
+      #1e293b
+    );
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  padding:20px;
+}
+
+.profile-card{
+
+  width:100%;
+  max-width:500px;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+
+  border:
+    1px solid rgba(255,255,255,0.15);
+
+  border-radius:30px;
+
+  padding:30px 25px;
+
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.35);
+}
+
+.profile-title{
+
+  color:white;
+
+  font-size:32px;
+  font-weight:700;
+
+  text-align:center;
+
+  margin-bottom:28px;
+}
+
+.drop-zone{
+
+  width:100%;
+  min-height:230px;
+
+  border:
+    2px dashed rgba(255,255,255,0.3);
+
+  border-radius:24px;
+
+  display:flex;
+  flex-direction:column;
+
+  justify-content:center;
+  align-items:center;
+
+  gap:12px;
+
+  cursor:pointer;
+
+  transition:0.3s;
+
+  overflow:hidden;
+
+  position:relative;
+}
+
+.drop-zone:hover{
+
+  border-color:#00a884;
+
+  background:
+    rgba(255,255,255,0.04);
+}
+
+.drop-zone.dragover{
+
+  border-color:#00a884;
+
+  transform:scale(1.02);
+
+  background:
+    rgba(0,168,132,0.12);
+}
+
+.drop-zone i{
+
+  color:white;
+
+  font-size:58px;
+}
+
+.drop-zone p{
+
+  color:
+    rgba(255,255,255,0.82);
+
+  text-align:center;
+
+  line-height:1.6;
+}
+
+.preview-image{
+
+  width:100%;
+  height:100%;
+
+  object-fit:cover;
+
+  position:absolute;
+  inset:0;
+
+  display:none;
+}
+
+.input-group{
+
+  margin-top:24px;
+}
+
+.input-group label{
+
+  display:block;
+
+  color:white;
+
+  margin-bottom:10px;
+
+  font-size:15px;
+}
+
+.input-group input{
+
+  width:100%;
+
+  height:56px;
+
+  border:none;
+  outline:none;
+
+  border-radius:18px;
+
+  background:
+    rgba(255,255,255,0.1);
+
+  color:white;
+
+  padding:0 18px;
+
+  font-size:16px;
+}
+
+.save-btn{
+
+  width:100%;
+  height:58px;
+
+  border:none;
+  border-radius:18px;
+
+  background:#00a884;
+
+  color:white;
+
+  font-size:18px;
+  font-weight:600;
+
+  margin-top:28px;
+
+  cursor:pointer;
+
+  transition:0.3s;
+}
+
+.save-btn:hover{
+
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(0,168,132,0.35);
+}
+
+.hidden-input{
+  display:none;
+}
+
+@media(max-width:768px){
+
+  .profile-card{
+    padding:24px 18px;
+  }
+
+  .profile-title{
+    font-size:27px;
+  }
+
+  .drop-zone{
+    min-height:200px;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<form
+method="POST"
+enctype="multipart/form-data"
+class="profile-card">
+
+{% csrf_token %}
+
+<div class="profile-title">
+  Edit Profile
+</div>
+
+<div
+class="drop-zone"
+id="dropZone">
+
+  <img
+    id="preview"
+    class="preview-image"
+
+    {% if profile.profile_picture %}
+      src="{{ profile.profile_picture.url }}"
+      style="display:block;"
+    {% endif %}
+  >
+
+  <i class="fas fa-cloud-upload-alt"></i>
+
+  <p>
+    Drag & Drop Image Here<br>
+    or Click To Browse
+  </p>
+
+  <input
+    type="file"
+    name="profile_picture"
+    id="fileInput"
+    accept="image/*"
+    class="hidden-input">
+
+</div>
+
+<div class="input-group">
+
+  <label>Edit Name</label>
+
+  <input
+    type="text"
+    name="username"
+    value="{{ request.user.username }}"
+    required>
+
+</div>
+
+<button
+type="submit"
+class="save-btn">
+
+  Save Changes
+
+</button>
+
+</form>
+
+<script>
+
+const dropZone =
+  document.getElementById("dropZone");
+
+const fileInput =
+  document.getElementById("fileInput");
+
+const preview =
+  document.getElementById("preview");
+
+// CLICK
+
+dropZone.onclick = () => {
+  fileInput.click();
+};
+
+// FILE SELECT
+
+fileInput.addEventListener(
+  "change",
+  handleFiles
+);
+
+// DRAG ENTER
+
+[
+  "dragenter",
+  "dragover"
+].forEach(eventName => {
+
+  dropZone.addEventListener(
+    eventName,
+    e => {
+
+      e.preventDefault();
+
+      dropZone.classList.add(
+        "dragover"
+      );
+    }
+  );
+});
+
+// DRAG LEAVE
+
+[
+  "dragleave",
+  "drop"
+].forEach(eventName => {
+
+  dropZone.addEventListener(
+    eventName,
+    e => {
+
+      e.preventDefault();
+
+      dropZone.classList.remove(
+        "dragover"
+      );
+    }
+  );
+});
+
+// DROP IMAGE
+
+dropZone.addEventListener(
+  "drop",
+  e => {
+
+    const files =
+      e.dataTransfer.files;
+
+    if(files.length){
+
+      fileInput.files = files;
+
+      previewFile(files[0]);
+    }
+  }
+);
+
+function handleFiles(){
+
+  if(fileInput.files.length){
+
+    previewFile(
+      fileInput.files[0]
+    );
+  }
+}
+
+function previewFile(file){
+
+  if(
+    !file.type.startsWith("image/")
+  ){
+
+    alert(
+      "Please select an image file."
+    );
+
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = e => {
+
+    preview.src = e.target.result;
+
+    preview.style.display = "block";
+  };
+
+  reader.readAsDataURL(file);
+}
+
+</script>
+
+</body>
+</html>

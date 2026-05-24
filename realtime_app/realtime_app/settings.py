@@ -1,11 +1,11 @@
 
 import os
-import dj_database_url
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+# MEDIA_URL = "media/"
+# MEDIA_ROOT = BASE_DIR / "media"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -14,17 +14,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^+zc+289wowx2l5ypn=dgx-raxy^=q(it@)4k5!!5!$be76-y1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "everyone-throughout-prizes-los.trycloudflare.com",
+    "gained-warren-jewel-resolution.trycloudflare.com",
 ]
 
 ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://everyone-throughout-prizes-los.trycloudflare.com",
+    "https://gained-warren-jewel-resolution.trycloudflare.com",
 ]
 # Application definition
 
@@ -163,4 +163,11 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
+
+MEDIA_URL = "/media/"
+
+MEDIA_ROOT = os.path.join(
+    BASE_DIR,
+    "media"
 )
