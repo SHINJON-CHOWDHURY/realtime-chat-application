@@ -72,7 +72,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "answer",
             "candidate",
             "call_ended",
-            "call_accepted"]:
+            "call_accepted",
+             "call_rejected"]:
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {
