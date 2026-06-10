@@ -18,13 +18,13 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "founder-coins-forming-feof.trycloudflare.com",
+    "avi-snow-garage-gateway.trycloudflare.com",
 ]
 
 ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://founder-coins-forming-feof.trycloudflare.com",
+    "https://avi-snow-garage-gateway.trycloudflare.com",
 ]
 # Application definition
 
