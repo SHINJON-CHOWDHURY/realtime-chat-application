@@ -766,6 +766,252 @@ margin-top: 8px;
        color: var(--text-sub);
         font-size: 1.3rem;
       }
+
+      /* ===== FILE ATTACHMENT ===== */
+
+#attach-btn {
+    width: 42px;
+    height: 42px;
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+#attach-btn:hover {
+    color: var(--wa-teal);
+}
+
+#file-input {
+    display: none;
+}
+
+#file-preview {
+    display: none;
+    position: fixed;
+    bottom: 75px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(500px, 90%);
+    padding: 12px;
+    background: var(--menu-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
+
+.file-preview-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-preview-icon {
+    font-size: 28px;
+    color: var(--wa-teal);
+}
+
+.file-preview-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-preview-name {
+    color: var(--text-main);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-preview-size {
+    color: var(--text-sub);
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+#cancel-file {
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#upload-file-btn {
+    border: none;
+    background: var(--wa-teal);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#upload-file-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   FILE MESSAGE
+   ========================================= */
+
+.attachment-message {
+    margin-top: 2px;
+    max-width: 320px;
+}
+
+.attachment-image {
+    display: block;
+    width: auto;
+    max-width: 280px;
+    max-height: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.attachment-video {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    background: #000;
+}
+
+.attachment-audio {
+    width: 280px;
+    max-width: 100%;
+}
+
+.attachment-file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 220px;
+    max-width: 300px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.06);
+    text-decoration: none;
+    color: var(--text-main);
+}
+
+body.dark-mode .attachment-file {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.attachment-file-icon {
+    font-size: 28px;
+    color: var(--wa-teal);
+    flex-shrink: 0;
+}
+
+.attachment-file-info {
+    min-width: 0;
+}
+
+.attachment-file-name {
+    font-weight: 600;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.attachment-file-type {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--text-sub);
+}
+
+.attachment-caption {
+    margin-top: 6px;
+    word-break: break-word;
+}
+
+/* ===== ATTACHMENT MESSAGE ===== */
+
+.attachment-message {
+    margin-top: 4px;
+    max-width: 320px;
+}
+
+.attachment-image {
+    display: block;
+    max-width: 280px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+.attachment-video {
+    display: block;
+    width: 280px;
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 8px;
+    background: #000;
+}
+
+.attachment-audio {
+    width: 280px;
+    max-width: 100%;
+}
+
+.attachment-file {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.05);
+    text-decoration: none;
+    color: var(--text-main);
+    max-width: 300px;
+}
+
+body.dark-mode .attachment-file {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.attachment-file-icon {
+    font-size: 28px;
+    color: var(--wa-teal);
+    flex-shrink: 0;
+}
+
+.attachment-file-info {
+    min-width: 0;
+}
+
+.attachment-file-name {
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.attachment-file-type {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-top: 3px;
+}
+
+.attachment-caption {
+    margin-top: 6px;
+    word-break: break-word;
+}
     </style>
   </head>
 
@@ -836,7 +1082,103 @@ margin-top: 8px;
           {% elif msg.receiver == request.user and msg.deleted_for_receiver %}
           <i style="color: gray">Message removed</i>
 
-          {% else %} {{ msg.content }} {% endif %}
+          {% else %}
+
+    {% if msg.attachment %}
+
+        <div class="attachment-message">
+
+            {% if msg.attachment_type|slice:":6" == "image/" %}
+
+                <a href="{{ msg.attachment.url }}" target="_blank">
+                    <img
+                        src="{{ msg.attachment.url }}"
+                        alt="{{ msg.attachment_name }}"
+                        class="attachment-image">
+                </a>
+
+            {% elif msg.attachment_type|slice:":6" == "video/" %}
+
+                <video
+                    class="attachment-video"
+                    controls>
+                    <source
+                        src="{{ msg.attachment.url }}"
+                        type="{{ msg.attachment_type }}">
+                    Your browser does not support video playback.
+                </video>
+
+            {% elif msg.attachment_type|slice:":6" == "audio/" %}
+
+                <audio
+                    class="attachment-audio"
+                    controls>
+                    <source
+                        src="{{ msg.attachment.url }}"
+                        type="{{ msg.attachment_type }}">
+                    Your browser does not support audio playback.
+                </audio>
+
+            {% elif msg.attachment_type == "application/pdf" %}
+
+                <a
+                    href="{{ msg.attachment.url }}"
+                    target="_blank"
+                    class="attachment-file">
+
+                    <i class="fas fa-file-pdf attachment-file-icon"></i>
+
+                    <div class="attachment-file-info">
+                        <div class="attachment-file-name">
+                            {{ msg.attachment_name }}
+                        </div>
+
+                        <div class="attachment-file-type">
+                            PDF Document
+                        </div>
+                    </div>
+
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ msg.attachment.url }}"
+                    target="_blank"
+                    download
+                    class="attachment-file">
+
+                    <i class="fas fa-file attachment-file-icon"></i>
+
+                    <div class="attachment-file-info">
+                        <div class="attachment-file-name">
+                            {{ msg.attachment_name }}
+                        </div>
+
+                        <div class="attachment-file-type">
+                            {{ msg.attachment_type|default:"File" }}
+                        </div>
+                    </div>
+
+                </a>
+
+            {% endif %}
+
+            {% if msg.content %}
+                <div class="attachment-caption">
+                    {{ msg.content }}
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% else %}
+
+        {{ msg.content }}
+
+    {% endif %}
+
+{% endif %}
 
           <div class="msg-menu-wrapper">
             <i
@@ -866,15 +1208,74 @@ margin-top: 8px;
       </div>
 
       <div id="messageBox">
-        <input
-          id="message-input"
-          class="input-box"
-          placeholder="Type a message"
-          autocomplete="off" />
-        <button id="send-btn">
-          <i class="fas fa-paper-plane"></i>
+
+    <!-- Attachment Button -->
+    <button id="attach-btn" type="button" title="Attach file">
+        <i class="fas fa-paperclip"></i>
+    </button>
+
+    <!-- Hidden File Input -->
+    <input
+        type="file"
+        id="file-input"
+        multiple
+    >
+
+    <!-- Message Input -->
+    <input
+        id="message-input"
+        class="input-box"
+        placeholder="Type a message"
+        autocomplete="off"
+    />
+
+    <!-- Send Button -->
+    <button id="send-btn" type="button">
+        <i class="fas fa-paper-plane"></i>
+    </button>
+
+</div>
+
+<!-- File Preview -->
+<div id="file-preview">
+
+    <div class="file-preview-content">
+
+        <i
+            id="file-preview-icon"
+            class="fas fa-file file-preview-icon">
+        </i>
+
+        <div class="file-preview-info">
+
+            <div
+                id="file-preview-name"
+                class="file-preview-name">
+            </div>
+
+            <div
+                id="file-preview-size"
+                class="file-preview-size">
+            </div>
+
+        </div>
+
+        <button
+            id="cancel-file"
+            type="button"
+            title="Cancel">
+            <i class="fas fa-times"></i>
         </button>
-      </div>
+
+        <button
+            id="upload-file-btn"
+            type="button">
+            Upload
+        </button>
+
+    </div>
+
+</div>
     </div>
 
     <script>
@@ -882,6 +1283,207 @@ margin-top: 8px;
       const messageInput = document.getElementById("message-input");
       const currentUser = "{{ request.user.username }}";
       const userId = "{{ other_user.id }}";
+
+      /* ===== FILE SHARING ===== */
+
+const attachBtn = document.getElementById("attach-btn");
+const fileInput = document.getElementById("file-input");
+const filePreview = document.getElementById("file-preview");
+const filePreviewName = document.getElementById("file-preview-name");
+const filePreviewSize = document.getElementById("file-preview-size");
+const filePreviewIcon = document.getElementById("file-preview-icon");
+const cancelFileBtn = document.getElementById("cancel-file");
+const uploadFileBtn = document.getElementById("upload-file-btn");
+
+let selectedFiles = [];
+
+
+/* Open file browser */
+
+attachBtn.addEventListener("click", () => {
+    fileInput.click();
+});
+
+
+/* When files are selected */
+
+fileInput.addEventListener("change", () => {
+
+    if (!fileInput.files.length) {
+        return;
+    }
+
+    selectedFiles = Array.from(fileInput.files);
+
+    const file = selectedFiles[0];
+
+    filePreviewName.textContent = file.name;
+
+    filePreviewSize.textContent =
+        formatFileSize(file.size);
+
+    updateFileIcon(file);
+
+    filePreview.style.display = "block";
+});
+
+
+/* Format file size */
+
+function formatFileSize(bytes) {
+
+    if (bytes < 1024) {
+        return bytes + " B";
+    }
+
+    if (bytes < 1024 * 1024) {
+        return (bytes / 1024).toFixed(1) + " KB";
+    }
+
+    if (bytes < 1024 * 1024 * 1024) {
+        return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    return (
+        bytes / (1024 * 1024 * 1024)
+    ).toFixed(1) + " GB";
+}
+
+
+/* Change icon according to file type */
+
+function updateFileIcon(file) {
+
+    filePreviewIcon.className =
+        "fas file-preview-icon";
+
+    if (file.type.startsWith("image/")) {
+
+        filePreviewIcon.classList.add("fa-image");
+
+    } else if (file.type.startsWith("video/")) {
+
+        filePreviewIcon.classList.add("fa-video");
+
+    } else if (file.type.startsWith("audio/")) {
+
+        filePreviewIcon.classList.add("fa-music");
+
+    } else if (
+        file.type === "application/pdf"
+    ) {
+
+        filePreviewIcon.classList.add("fa-file-pdf");
+
+    } else {
+
+        filePreviewIcon.classList.add("fa-file");
+    }
+}
+
+
+/* Cancel selected file */
+
+cancelFileBtn.addEventListener("click", () => {
+
+    selectedFiles = [];
+
+    fileInput.value = "";
+
+    filePreview.style.display = "none";
+});
+
+
+/* Upload */
+
+uploadFileBtn.addEventListener("click", async () => {
+
+    if (!selectedFiles.length) {
+        return;
+    }
+
+    uploadFileBtn.disabled = true;
+    uploadFileBtn.textContent = "Uploading...";
+
+    try {
+
+        const formData = new FormData();
+
+        formData.append(
+            "file",
+            selectedFiles[0]
+        );
+
+        formData.append(
+            "csrfmiddlewaretoken",
+            "{{ csrf_token }}"
+        );
+
+        const response = await fetch(
+            `/chat/${userId}/upload/`,
+            {
+                method: "POST",
+                body: formData,
+                credentials: "same-origin"
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                "Upload failed"
+            );
+        }
+
+const data = await response.json();
+
+console.log(
+    "File uploaded:",
+    data
+);
+
+
+/* =========================================
+   SHOW FILE IMMEDIATELY FOR SENDER
+   ========================================= */
+
+appendFileMessage(data);
+
+
+/* =========================================
+   CLEAR FILE PREVIEW
+   ========================================= */
+
+selectedFiles = [];
+
+fileInput.value = "";
+
+filePreview.style.display = "none";
+       //  /*
+       //   * Temporarily reload the page.
+       //   * Later we will replace this with
+       //   * real-time file messages through WebSocket.
+       //   */
+
+       //  window.location.reload();
+
+    } catch (error) {
+
+        console.error(
+            "File upload error:",
+            error
+        );
+
+        alert(
+            "File upload failed. Please try again."
+        );
+
+    } finally {
+
+        uploadFileBtn.disabled = false;
+        uploadFileBtn.textContent = "Upload";
+    }
+
+});
 
       /* ===== Header Menu ===== */
       document
@@ -922,6 +1524,256 @@ margin-top: 8px;
       });
 
       /* ===== WebSocket ===== */
+      /* =========================================
+   REAL-TIME FILE MESSAGE RENDERER
+   ========================================= */
+
+function appendFileMessage(data) {
+
+    const isMe =
+        data.sender === currentUser;
+
+
+    const bubbleClass =
+        isMe ? "sent" : "received";
+
+
+    const fileType =
+        data.file_type || "";
+
+
+    const fileUrl =
+        data.file_url || "#";
+
+
+    const fileName =
+        escapeHtml(
+            data.file_name || "File"
+        );
+
+
+    const caption =
+        data.caption
+            ? `
+                <div class="attachment-caption">
+                    ${escapeHtml(data.caption)}
+                </div>
+              `
+            : "";
+
+
+    let fileContent = "";
+
+
+    /* ==============================
+       IMAGE
+       ============================== */
+
+    if (
+        fileType.startsWith("image/")
+    ) {
+
+        fileContent = `
+            <a
+                href="${fileUrl}"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <img
+                    src="${fileUrl}"
+                    alt="${fileName}"
+                    class="attachment-image">
+
+            </a>
+        `;
+    }
+
+
+    /* ==============================
+       VIDEO
+       ============================== */
+
+    else if (
+        fileType.startsWith("video/")
+    ) {
+
+        fileContent = `
+            <video
+                class="attachment-video"
+                controls
+                preload="metadata">
+
+                <source
+                    src="${fileUrl}"
+                    type="${fileType}">
+
+                Your browser does not support
+                video playback.
+
+            </video>
+        `;
+    }
+
+
+    /* ==============================
+       AUDIO
+       ============================== */
+
+    else if (
+        fileType.startsWith("audio/")
+    ) {
+
+        fileContent = `
+            <audio
+                class="attachment-audio"
+                controls>
+
+                <source
+                    src="${fileUrl}"
+                    type="${fileType}">
+
+                Your browser does not support
+                audio playback.
+
+            </audio>
+        `;
+    }
+
+
+    /* ==============================
+       PDF
+       ============================== */
+
+    else if (
+        fileType === "application/pdf"
+    ) {
+
+        fileContent = `
+            <a
+                href="${fileUrl}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="attachment-file">
+
+                <i
+                    class="fas fa-file-pdf
+                           attachment-file-icon">
+                </i>
+
+                <div class="attachment-file-info">
+
+                    <div class="attachment-file-name">
+                        ${fileName}
+                    </div>
+
+                    <div class="attachment-file-type">
+                        PDF Document
+                    </div>
+
+                </div>
+
+            </a>
+        `;
+    }
+
+
+    /* ==============================
+       OTHER FILES
+       ============================== */
+
+    else {
+
+        fileContent = `
+            <a
+                href="${fileUrl}"
+                download
+                class="attachment-file">
+
+                <i
+                    class="fas fa-file
+                           attachment-file-icon">
+                </i>
+
+                <div class="attachment-file-info">
+
+                    <div class="attachment-file-name">
+                        ${fileName}
+                    </div>
+
+                    <div class="attachment-file-type">
+                        ${escapeHtml(fileType || "File")}
+                    </div>
+
+                </div>
+
+            </a>
+        `;
+    }
+
+
+    /* ==============================
+       CREATE MESSAGE BUBBLE
+       ============================== */
+
+    const wrapper =
+        document.createElement("div");
+
+    wrapper.className =
+        "msg-wrapper";
+
+    wrapper.style.display =
+        "flex";
+
+    wrapper.style.flexDirection =
+        "column";
+
+    wrapper.style.width =
+        "100%";
+
+
+    wrapper.innerHTML = `
+
+        <div class="bubble ${bubbleClass}">
+
+            <div class="attachment-message">
+
+                ${fileContent}
+
+                ${caption}
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    chatBox.appendChild(wrapper);
+
+
+    /* ==============================
+       SCROLL TO BOTTOM
+       ============================== */
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
+
+
+/* =========================================
+   ESCAPE HTML
+   ========================================= */
+
+function escapeHtml(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value;
+
+    return div.innerHTML;
+}
       const protocol = window.location.protocol === "https:" ? "wss" : "ws";
 
       const socket = new WebSocket(
@@ -931,6 +1783,23 @@ margin-top: 8px;
 
       socket.onmessage = async function (e) {
         const data = JSON.parse(e.data);
+                // =====================================
+        // REAL-TIME FILE MESSAGE
+        // =====================================
+
+if (data.type === "file_message") {
+
+    // The sender already displayed the file
+    // immediately after the HTTP upload succeeded.
+    if (data.sender === currentUser) {
+        return;
+    }
+
+    // Receiver displays the file through WebSocket.
+    appendFileMessage(data);
+
+    return;
+}
         // Ignore own signaling messages
         if (data.sender === currentUser && data.type !== undefined) {
           return;

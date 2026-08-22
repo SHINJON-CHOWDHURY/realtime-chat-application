@@ -128,6 +128,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "sender": event["sender"],
             "message_id": event["message_id"],
         }))
+        
+            # =========================
+    # FILE MESSAGE
+    # =========================
+
+    async def file_message(self, event):
+
+        await self.send(
+            text_data=json.dumps(
+                {
+                    "type": "file_message",
+                    "message_id": event["message_id"],
+                    "sender": event["sender"],
+                    "file_name": event["file_name"],
+                    "file_url": event["file_url"],
+                    "file_type": event["file_type"],
+                    "file_size": event["file_size"],
+                    "caption": event.get(
+                        "caption",
+                        ""
+                    ),
+                }
+            )
+        )
 
     async def signal_message(self, event):
         await self.send(text_data=json.dumps(event["data"]))

@@ -32,6 +32,13 @@ urlpatterns = [
         name='chat'
     ),
 
+# FILE UPLOAD
+path(
+    'chat/<int:user_id>/upload/',
+    views.upload_file_view,
+    name='upload_file'
+),
+
     # DELETE CHAT
     path(
         'chat/<int:user_id>/delete/',

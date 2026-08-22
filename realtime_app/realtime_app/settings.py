@@ -18,13 +18,13 @@ DEBUG = True
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "avi-snow-garage-gateway.trycloudflare.com",
+    "phases-payday-scope-postal.trycloudflare.com",
 ]
 
 ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://avi-snow-garage-gateway.trycloudflare.com",
+    "https://phases-payday-scope-postal.trycloudflare.com",
 ]
 # Application definition
 

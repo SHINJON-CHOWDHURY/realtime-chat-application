@@ -7,6 +7,8 @@ from django.shortcuts import (
     get_object_or_404
 )
 
+from django.http import JsonResponse
+
 from django.views.decorators.http import require_POST
 
 from django.contrib.auth import login
@@ -183,8 +185,130 @@ def chat_view(request, user_id):
             "other_user": other_user
         }
     )
+# =========================
+# FILE UPLOAD
+# =========================
+@login_required
+@require_POST
+def upload_file_view(request, user_id):
 
+    # Get receiver
+    other_user = get_object_or_404(
+        User,
+        id=user_id
+    )
 
+    # Get uploaded file
+    uploaded_file = request.FILES.get("file")
+
+    # Optional caption
+    content = request.POST.get(
+        "content",
+        ""
+    ).strip()
+
+    # Make sure file exists
+    if not uploaded_file:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "No file was uploaded."
+            },
+            status=400
+        )
+
+    # Save message
+    message = Message.objects.create(
+        sender=request.user,
+        receiver=other_user,
+        content=content,
+        attachment=uploaded_file,
+        attachment_name=uploaded_file.name,
+        attachment_type=(
+            uploaded_file.content_type
+            or ""
+        ),
+        attachment_size=uploaded_file.size
+    )
+
+    # =====================================
+    # REAL-TIME FILE MESSAGE
+    # =====================================
+
+    ids = sorted([
+        request.user.id,
+        other_user.id
+    ])
+
+    room_group_name = (
+        f"chat_{ids[0]}_{ids[1]}"
+    )
+
+    channel_layer = get_channel_layer()
+
+    async_to_sync(
+        channel_layer.group_send
+    )(
+        room_group_name,
+        {
+            "type": "file_message",
+
+            "message_id": message.id,
+
+            "sender": request.user.username,
+
+            "file_name": message.attachment_name,
+
+            "file_url": message.attachment.url,
+
+            "file_type": message.attachment_type,
+
+            "file_size": message.attachment_size,
+
+            "caption": message.content,
+        }
+    )
+
+    # Update home for both users
+    async_to_sync(
+        channel_layer.group_send
+    )(
+        f"user_{request.user.id}",
+        {
+            "type": "update_home"
+        }
+    )
+
+    async_to_sync(
+        channel_layer.group_send
+    )(
+        f"user_{other_user.id}",
+        {
+            "type": "update_home"
+        }
+    )
+
+    return JsonResponse(
+        {
+       "success": True,
+
+        "message_id": message.id,
+
+        "sender": request.user.username,
+
+        "file_name": message.attachment_name,
+        
+        "caption": message.content,
+
+        "file_url": message.attachment.url,
+
+        "file_type": message.attachment_type,
+
+        "file_size": message.attachment_size,
+
+        "caption": message.content
+        }
+    )
 # =========================
 # DELETE ENTIRE CHAT
 # =========================
