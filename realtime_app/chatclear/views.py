@@ -1,4 +1,12 @@
-
+import json
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import json
+from django.http import JsonResponse
+from .ai.services import ask_ai
+from django.views.decorators.csrf import csrf_exempt
+from .ai.services import ask_ai
+from .models import AIConversation
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import (
@@ -26,7 +34,8 @@ from .forms import (
 
 from .models import (
     Message,
-    UserProfile
+    UserProfile,
+    AIConversation
 )
 
 
@@ -129,7 +138,7 @@ def home_view(request):
 
     if query:
 
-        search_results = User.objects.filter(
+       search_results = User.objects.filter(
             email__icontains=query
         ).exclude(
             id=request.user.id
@@ -137,12 +146,21 @@ def home_view(request):
             "userprofile"
         )
 
+    # =========================
+    # AI CONVERSATIONS
+    # =========================
+
+    ai_conversations = AIConversation.objects.filter(
+        user=request.user
+    ).order_by("timestamp")
+
     return render(
         request,
         "home.html",
         {
             "previous_users": previous_users,
-            "search_results": search_results
+            "search_results": search_results,
+            "ai_conversations": ai_conversations,
         }
     )
 
@@ -181,8 +199,11 @@ def chat_view(request, user_id):
         request,
         "chat.html",
         {
-            "messages": visible_messages,
-            "other_user": other_user
+        "messages": visible_messages,
+        "other_user": other_user,
+        "ai_conversations": AIConversation.objects.filter(
+            user=request.user
+        ).order_by("timestamp")
         }
     )
 # =========================
@@ -250,23 +271,25 @@ def upload_file_view(request, user_id):
         channel_layer.group_send
     )(
         room_group_name,
-        {
-            "type": "file_message",
+      {
+    "type": "file_message",
 
-            "message_id": message.id,
+    "message_id": message.id,
 
-            "sender": request.user.username,
+    "sender": request.user.username,
 
-            "file_name": message.attachment_name,
+    "sender_id": request.user.id,
 
-            "file_url": message.attachment.url,
+    "file_name": message.attachment_name,
 
-            "file_type": message.attachment_type,
+    "file_url": message.attachment.url,
 
-            "file_size": message.attachment_size,
+    "file_type": message.attachment_type,
 
-            "caption": message.content,
-        }
+    "file_size": message.attachment_size,
+
+    "caption": message.content,
+}
     )
 
     # Update home for both users
@@ -289,26 +312,26 @@ def upload_file_view(request, user_id):
     )
 
     return JsonResponse(
-        {
-       "success": True,
+    {
+        "success": True,
 
         "message_id": message.id,
 
         "sender": request.user.username,
 
+        "sender_id": request.user.id,
+
         "file_name": message.attachment_name,
-        
+
         "caption": message.content,
 
         "file_url": message.attachment.url,
 
         "file_type": message.attachment_type,
 
-        "file_size": message.attachment_size,
-
-        "caption": message.content
-        }
-    )
+        "file_size": message.attachment_size
+    }
+)
 # =========================
 # DELETE ENTIRE CHAT
 # =========================
@@ -466,3 +489,72 @@ def edit_profile(request):
             "profile": profile
         }
     )
+@csrf_exempt
+@require_POST
+def ai_assistant(request):
+
+    try:
+
+        # =========================================
+        # Read request data
+        # =========================================
+
+        data = json.loads(request.body)
+
+        prompt = data.get("prompt", "").strip()
+
+
+        # =========================================
+        # Check empty prompt
+        # =========================================
+
+        if not prompt:
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "Prompt is empty."
+                },
+                status=400
+            )
+
+
+        # =========================================
+        # Ask Ollama / Gemma
+        # =========================================
+
+        answer = ask_ai(prompt)
+
+
+        # =========================================
+        # Save AI conversation
+        # =========================================
+
+        AIConversation.objects.create(
+            user=request.user,
+            prompt=prompt,
+            response=answer
+        )
+
+
+        # =========================================
+        # Return AI response
+        # =========================================
+
+        return JsonResponse(
+            {
+                "success": True,
+                "answer": answer
+            }
+        )
+
+
+    except Exception as e:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "error": str(e)
+            },
+            status=500
+        )

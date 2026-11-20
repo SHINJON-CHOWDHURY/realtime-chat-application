@@ -24,6 +24,13 @@ urlpatterns = [
         views.home_view,
         name='home'
     ),
+    
+    # AI ASSISTANT
+path(
+    'ai-assistant/',
+    views.ai_assistant,
+    name='ai_assistant'
+),
 
     # CHAT
     path(

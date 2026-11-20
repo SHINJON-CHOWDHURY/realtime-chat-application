@@ -1,17 +1,11 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Chat with {{ other_user.username }}</title>
-
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <title>Chat with {{ other_user.username }}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
       :root {
 
   --wa-teal:#00a884;
@@ -248,6 +242,62 @@ overflow-wrap: break-word;
        background: var(--bg-received);
         border-radius: 0 8px 8px 8px;
       }
+
+      /* =========================================
+   AI CONVERSATION HISTORY
+   ========================================= */
+
+.ai-history-prompt {
+    background: var(--bg-sent);
+    color: var(--text-main);
+}
+
+.ai-history-response {
+    border-left: 3px solid var(--wa-teal);
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+/* AI label */
+
+.ai-message-label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    color: var(--wa-teal);
+
+    margin-bottom: 6px;
+}
+
+/* Small AI spark */
+
+.ai-history-spark {
+    font-size: 1rem;
+
+    background:
+        linear-gradient(
+            135deg,
+            #8b5cf6,
+            #06b6d4
+        );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+}
+
+/* AI response */
+
+.ai-response-text {
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.5;
+}
 
       /* Message 3-dot */
       .msg-menu-wrapper {
@@ -767,6 +817,146 @@ margin-top: 8px;
         font-size: 1.3rem;
       }
 
+/* ===== QUANTUM AI BUTTON ===== */
+
+#ai-btn {
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    overflow: visible;
+}
+
+
+/* AI icon container */
+
+.ai-icon-wrapper {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    filter:
+        drop-shadow(
+            0 0 5px rgba(139, 92, 246, 0.35)
+        );
+
+    transition:
+        transform 0.2s ease,
+        filter 0.2s ease;
+}
+
+
+/* SVG */
+
+.ai-icon-svg {
+    width: 34px;
+    height: 34px;
+
+    display: block;
+}
+
+
+/* Hover */
+
+#ai-btn:hover .ai-icon-wrapper {
+    transform: scale(1.12);
+
+    filter:
+        drop-shadow(
+            0 0 9px rgba(139, 92, 246, 0.65)
+        );
+}
+
+
+/* Click */
+
+#ai-btn:active .ai-icon-wrapper {
+    transform: scale(0.9);
+}
+
+
+/* AI is processing */
+
+/* =========================================
+   AI THINKING / LOADING ANIMATION
+   Smooth breathing effect
+   ========================================= */
+
+#ai-btn.loading .ai-icon-wrapper {
+    animation: aiBreathing 1.8s ease-in-out infinite;
+
+    filter:
+        drop-shadow(
+            0 0 7px rgba(139, 92, 246, 0.45)
+        )
+        drop-shadow(
+            0 0 14px rgba(6, 182, 212, 0.25)
+        );
+}
+
+
+@keyframes aiBreathing {
+
+    0% {
+        transform: scale(1);
+
+        opacity: 0.72;
+
+        filter:
+            drop-shadow(
+                0 0 5px rgba(139, 92, 246, 0.35)
+            )
+            drop-shadow(
+                0 0 8px rgba(6, 182, 212, 0.20)
+            );
+    }
+
+
+    50% {
+        transform: scale(1.13);
+
+        opacity: 1;
+
+        filter:
+            drop-shadow(
+                0 0 12px rgba(139, 92, 246, 0.75)
+            )
+            drop-shadow(
+                0 0 22px rgba(6, 182, 212, 0.45)
+            );
+    }
+
+
+    100% {
+        transform: scale(1);
+
+        opacity: 0.72;
+
+        filter:
+            drop-shadow(
+                0 0 5px rgba(139, 92, 246, 0.35)
+            )
+            drop-shadow(
+                0 0 8px rgba(6, 182, 212, 0.20)
+            );
+    }
+}
+
       /* ===== FILE ATTACHMENT ===== */
 
 #attach-btn {
@@ -777,7 +967,7 @@ margin-top: 8px;
     color: var(--text-sub);
     font-size: 1.25rem;
     cursor: pointer;
-    display: flex;
+    display: flex; 
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -1012,202 +1202,351 @@ body.dark-mode .attachment-file {
     margin-top: 6px;
     word-break: break-word;
 }
-    </style>
-  </head>
-
-  <body>
-    <script>
+        </style>
+    </head>
+    <body>
+        <script>
       if (localStorage.getItem("theme") === "dark") {
         document.body.classList.add("dark-mode");
       }
-    </script>
-
-    <div class="app-container">
-      <header>
-        <a href="/" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-<div class="chat-avatar">
-
-    {% if other_user.userprofile.profile_picture %}
-
-        <img
-            src="{{ other_user.userprofile.profile_picture.url }}"
-            alt="profile">
-
-    {% else %}
+        </script>
+        <div class="app-container">
+            <header>
+                <a href="/" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="chat-avatar">
+                    {% if other_user.userprofile.profile_picture %}
+                    <img src="{{ other_user.userprofile.profile_picture.url }}" alt="profile">
+                    {% else %}
 
         {{ other_user.username|slice:":1"|upper }}
 
     {% endif %}
-
-    <div class="online-dot"></div>
-
-</div>
-        <span class="username">{{ other_user.username }}</span>
-        <div
-          style="
+                    <div class="online-dot"></div>
+                </div>
+                <span class="username">{{ other_user.username }}</span>
+                <div style="
             margin-left: auto;
             margin-right: 15px;
             display: flex;
             gap: 15px;
           ">
-          <i class="fas fa-phone" id="audio-call" style="cursor: pointer"></i>
-
-          <i class="fas fa-video" id="video-call" style="cursor: pointer"></i>
-        </div>
-        <div class="menu-wrapper">
-          <i
-            class="fas fa-ellipsis-vertical"
-            id="headerMenuIcon"
-            style="cursor: pointer"></i>
-
-          <div id="headerMenu" class="menu-dropdown">
-            <form method="POST" action="{% url 'delete_chat' other_user.id %}">
-              {% csrf_token %}
-              <button type="submit">Delete Chat</button>
-            </form>
-          </div>
-        </div>
-      </header>
-
-      <div id="chat-box">
-        {% for msg in messages %}
-        <div
-          class="bubble {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
-          {% if msg.is_unsent %}
-          <i style="color: gray">Message unsent</i>
-
-          {% elif msg.sender == request.user and msg.deleted_for_sender %}
-          <i style="color: gray">Message removed</i>
-
-          {% elif msg.receiver == request.user and msg.deleted_for_receiver %}
-          <i style="color: gray">Message removed</i>
-
-          {% else %}
-
-    {% if msg.attachment %}
-
-        <div class="attachment-message">
-
-            {% if msg.attachment_type|slice:":6" == "image/" %}
-
-                <a href="{{ msg.attachment.url }}" target="_blank">
-                    <img
-                        src="{{ msg.attachment.url }}"
-                        alt="{{ msg.attachment_name }}"
-                        class="attachment-image">
-                </a>
-
-            {% elif msg.attachment_type|slice:":6" == "video/" %}
-
-                <video
-                    class="attachment-video"
-                    controls>
-                    <source
-                        src="{{ msg.attachment.url }}"
-                        type="{{ msg.attachment_type }}">
-                    Your browser does not support video playback.
-                </video>
-
-            {% elif msg.attachment_type|slice:":6" == "audio/" %}
-
-                <audio
-                    class="attachment-audio"
-                    controls>
-                    <source
-                        src="{{ msg.attachment.url }}"
-                        type="{{ msg.attachment_type }}">
-                    Your browser does not support audio playback.
-                </audio>
-
-            {% elif msg.attachment_type == "application/pdf" %}
-
-                <a
-                    href="{{ msg.attachment.url }}"
-                    target="_blank"
-                    class="attachment-file">
-
-                    <i class="fas fa-file-pdf attachment-file-icon"></i>
-
-                    <div class="attachment-file-info">
-                        <div class="attachment-file-name">
-                            {{ msg.attachment_name }}
-                        </div>
-
-                        <div class="attachment-file-type">
-                            PDF Document
-                        </div>
+                    <i class="fas fa-phone" id="audio-call" style="cursor: pointer"></i>
+                    <i class="fas fa-video" id="video-call" style="cursor: pointer"></i>
+                </div>
+                <div class="menu-wrapper">
+                    <i class="fas fa-ellipsis-vertical" id="headerMenuIcon" style="cursor: pointer"></i>
+                    <div id="headerMenu" class="menu-dropdown">
+                        <form method="POST" action="{% url 'delete_chat' other_user.id %}">
+                            {% csrf_token %}
+                            <button type="submit">Delete Chat</button>
+                        </form>
                     </div>
+                </div>
+            </header>
+<div id="chat-box">
 
-                </a>
+    <!-- =========================================
+         SAVED AI CONVERSATIONS
+         ========================================= -->
+
+    {% for ai in ai_conversations %}
+
+        <!-- AI PROMPT -->
+        <div
+            class="msg-wrapper"
+            style="
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            "
+        >
+            <div class="bubble sent ai-history-prompt">
+                {{ ai.prompt }}
+            </div>
+        </div>
+
+        <!-- AI RESPONSE -->
+        <div
+            class="msg-wrapper"
+            style="
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+            "
+        >
+            <div class="bubble received ai-history-response">
+
+                <div class="ai-message-label">
+                    <span class="ai-history-spark">✦</span>
+                    AI Assistant
+                </div>
+
+                <div class="ai-response-text">
+                    {{ ai.response }}
+                </div>
+
+            </div>
+        </div>
+
+    {% endfor %}
+
+
+<!-- =========================================
+     NORMAL CHAT MESSAGES
+     ========================================= -->
+
+{% for msg in messages %}
+
+    <div class="bubble {% if msg.sender == request.user %}sent{% else %}received{% endif %}">
+
+        <!-- =========================================
+             UNSENT MESSAGE
+             ========================================= -->
+
+        {% if msg.is_unsent %}
+
+            <i style="color: gray;">
+                Message unsent
+            </i>
+
+
+        <!-- =========================================
+             MESSAGE REMOVED BY SENDER
+             ========================================= -->
+
+        {% elif msg.sender == request.user and msg.deleted_for_sender %}
+
+            <i style="color: gray;">
+                Message removed
+            </i>
+
+
+        <!-- =========================================
+             MESSAGE REMOVED BY RECEIVER
+             ========================================= -->
+
+        {% elif msg.receiver == request.user and msg.deleted_for_receiver %}
+
+            <i style="color: gray;">
+                Message removed
+            </i>
+
+
+        <!-- =========================================
+             NORMAL MESSAGE
+             ========================================= -->
+
+        {% else %}
+
+            <!-- =========================================
+                 CHECK FOR ATTACHMENT
+                 ========================================= -->
+
+            {% if msg.attachment %}
+
+                <div class="attachment-message">
+
+                    <!-- IMAGE -->
+
+                    {% if msg.attachment_type|slice:":6" == "image/" %}
+
+                        <a
+                            href="{{ msg.attachment.url }}"
+                            target="_blank"
+                        >
+                            <img
+                                src="{{ msg.attachment.url }}"
+                                alt="{{ msg.attachment_name }}"
+                                class="attachment-image"
+                            >
+                        </a>
+
+
+                    <!-- VIDEO -->
+
+                    {% elif msg.attachment_type|slice:":6" == "video/" %}
+
+                        <video
+                            class="attachment-video"
+                            controls
+                        >
+                            <source
+                                src="{{ msg.attachment.url }}"
+                                type="{{ msg.attachment_type }}"
+                            >
+
+                            Your browser does not support video playback.
+                        </video>
+
+
+                    <!-- AUDIO -->
+
+                    {% elif msg.attachment_type|slice:":6" == "audio/" %}
+
+                        <audio
+                            class="attachment-audio"
+                            controls
+                        >
+                            <source
+                                src="{{ msg.attachment.url }}"
+                                type="{{ msg.attachment_type }}"
+                            >
+
+                            Your browser does not support audio playback.
+                        </audio>
+
+
+                    <!-- PDF -->
+
+                    {% elif msg.attachment_type == "application/pdf" %}
+
+                        <a
+                            href="{{ msg.attachment.url }}"
+                            target="_blank"
+                            class="attachment-file"
+                        >
+
+                            <i class="fas fa-file-pdf attachment-file-icon"></i>
+
+                            <div class="attachment-file-info">
+
+                                <div class="attachment-file-name">
+                                    {{ msg.attachment_name }}
+                                </div>
+
+                                <div class="attachment-file-type">
+                                    PDF Document
+                                </div>
+
+                            </div>
+
+                        </a>
+
+
+                    <!-- OTHER FILE TYPES -->
+
+                    {% else %}
+
+                        <a
+                            href="{{ msg.attachment.url }}"
+                            target="_blank"
+                            download
+                            class="attachment-file"
+                        >
+
+                            <i class="fas fa-file attachment-file-icon"></i>
+
+                            <div class="attachment-file-info">
+
+                                <div class="attachment-file-name">
+                                    {{ msg.attachment_name }}
+                                </div>
+
+                                <div class="attachment-file-type">
+                                    {{ msg.attachment_type|default:"File" }}
+                                </div>
+
+                            </div>
+
+                        </a>
+
+                    {% endif %}
+
+
+                    <!-- FILE CAPTION -->
+
+                    {% if msg.content %}
+
+                        <div class="attachment-caption">
+                            {{ msg.content }}
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            <!-- =========================================
+                 TEXT MESSAGE
+                 ========================================= -->
 
             {% else %}
 
-                <a
-                    href="{{ msg.attachment.url }}"
-                    target="_blank"
-                    download
-                    class="attachment-file">
+                {% if msg.content %}
 
-                    <i class="fas fa-file attachment-file-icon"></i>
-
-                    <div class="attachment-file-info">
-                        <div class="attachment-file-name">
-                            {{ msg.attachment_name }}
-                        </div>
-
-                        <div class="attachment-file-type">
-                            {{ msg.attachment_type|default:"File" }}
-                        </div>
-                    </div>
-
-                </a>
-
-            {% endif %}
-
-            {% if msg.content %}
-                <div class="attachment-caption">
                     {{ msg.content }}
-                </div>
+
+                {% endif %}
+
             {% endif %}
 
-        </div>
+        {% endif %}
 
-    {% else %}
+        <!-- =========================================
+             MESSAGE MENU
+             ========================================= -->
 
-        {{ msg.content }}
+        <div class="msg-menu-wrapper">
 
-    {% endif %}
-
-{% endif %}
-
-          <div class="msg-menu-wrapper">
             <i
-              class="fas fa-ellipsis-vertical msg-menu-icon"
-              data-id="{{ msg.id }}"
-              style="cursor: pointer; font-size: 12px">
-            </i>
+                class="fas fa-ellipsis-vertical msg-menu-icon"
+                data-id="{{ msg.id }}"
+                style="cursor: pointer; font-size: 12px"
+            ></i>
 
-            <div id="msgMenu-{{ msg.id }}" class="msg-dropdown">
-              <!-- Remove (for both sender + receiver) -->
-              <form method="POST" action="{% url 'remove_message' msg.id %}">
-                {% csrf_token %}
-                <button type="submit">Remove</button>
-              </form>
+            <div
+                id="msgMenu-{{ msg.id }}"
+                class="msg-dropdown"
+            >
 
-              <!-- Unsend (only for sender) -->
-              {% if msg.sender == request.user and not msg.is_unsent %}
-              <form method="POST" action="{% url 'unsend_message' msg.id %}">
-                {% csrf_token %}
-                <button type="submit">Unsend</button>
-              </form>
-              {% endif %}
+                <!-- Remove -->
+
+                <form
+                    method="POST"
+                    action="{% url 'remove_message' msg.id %}"
+                >
+                    {% csrf_token %}
+
+                    <button type="submit">
+                        Remove
+                    </button>
+
+                </form>
+
+
+                <!-- Unsend -->
+
+                {% if msg.sender == request.user and not msg.is_unsent %}
+
+                    <form
+                        method="POST"
+                        action="{% url 'unsend_message' msg.id %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button type="submit">
+                            Unsend
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
             </div>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
 
-      <div id="messageBox">
+        </div>
+
+    </div>
+
+{% endfor %}
+
+</div>
+<div id="messageBox">
+
+    {% csrf_token %}
 
     <!-- Attachment Button -->
     <button id="attach-btn" type="button" title="Attach file">
@@ -1215,19 +1554,215 @@ body.dark-mode .attachment-file {
     </button>
 
     <!-- Hidden File Input -->
-    <input
-        type="file"
-        id="file-input"
-        multiple
-    >
+    <input type="file" id="file-input" multiple>
 
+    <!-- AI Assistant Button -->
+   <button id="ai-btn" type="button" title="Ask AI">
+
+    <div class="ai-icon-wrapper">
+
+        <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 100 100"
+            class="ai-icon-svg"
+        >
+
+            <defs>
+
+                <linearGradient
+                    id="grad-chat-ai"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                >
+                    <stop
+                        offset="0%"
+                        stop-color="#8b5cf6"
+                    />
+
+                    <stop
+                        offset="100%"
+                        stop-color="#06b6d4"
+                    />
+                </linearGradient>
+
+            </defs>
+
+
+            <style>
+
+                .spin-cw-chat-ai {
+                    animation:
+                        spinCWChatAI
+                        10s
+                        linear
+                        infinite;
+
+                    transform-origin:
+                        50px 50px;
+                }
+
+
+                .spin-ccw-chat-ai {
+                    animation:
+                        spinCCWChatAI
+                        14s
+                        linear
+                        infinite;
+
+                    transform-origin:
+                        50px 50px;
+                }
+
+
+                .pulse-chat-ai {
+                    animation:
+                        pulseScaleChatAI
+                        3.2s
+                        ease-in-out
+                        infinite
+                        alternate;
+
+                    transform-origin:
+                        50px 50px;
+                }
+
+
+                @keyframes spinCWChatAI {
+
+                    100% {
+                        transform:
+                            rotate(360deg);
+                    }
+
+                }
+
+
+                @keyframes spinCCWChatAI {
+
+                    100% {
+                        transform:
+                            rotate(-360deg);
+                    }
+
+                }
+
+
+                @keyframes pulseScaleChatAI {
+
+                    0% {
+                        transform:
+                            scale(0.92);
+
+                        opacity:
+                            0.85;
+                    }
+
+
+                    100% {
+                        transform:
+                            scale(1.08);
+
+                        opacity:
+                            1;
+                    }
+
+                }
+
+            </style>
+
+
+            <!-- Rotating Geometric Satellite Ring -->
+
+            <rect
+                x="20"
+                y="20"
+                width="60"
+                height="60"
+                rx="16"
+                fill="none"
+                stroke="url(#grad-chat-ai)"
+                stroke-width="1.2"
+                opacity="0.4"
+                class="spin-cw-chat-ai"
+            />
+
+
+            <circle
+                cx="50"
+                cy="50"
+                r="38"
+                fill="none"
+                stroke="url(#grad-chat-ai)"
+                stroke-width="1"
+                stroke-dasharray="8 6"
+                opacity="0.6"
+                class="spin-ccw-chat-ai"
+            />
+
+
+            <!-- Main AI Spark -->
+
+            <path
+                d="
+                    M 50,10
+                    C 50,35 35,50 10,50
+                    C 35,50 50,65 50,90
+                    C 50,65 65,50 90,50
+                    C 65,50 50,35 50,10
+                    Z
+                "
+                fill="url(#grad-chat-ai)"
+                stroke="url(#grad-chat-ai)"
+                stroke-width="2"
+                class="pulse-chat-ai"
+            />
+
+
+            <!-- Mini Accent Spark -->
+
+            <path
+                d="
+                    M 72,22
+                    C 72,28 68,32 62,32
+                    C 68,32 72,36 72,42
+                    C 72,36 76,32 82,32
+                    C 76,32 72,28 72,22
+                    Z
+                "
+                fill="url(#grad-chat-ai)"
+                opacity="0.8"
+            />
+
+
+            <!-- Second Mini Accent Spark -->
+
+            <path
+                d="
+                    M 28,68
+                    C 28,72 25,75 20,75
+                    C 25,75 28,78 28,82
+                    C 28,78 31,75 36,75
+                    C 31,75 28,72 28,68
+                    Z
+                "
+                fill="url(#grad-chat-ai)"
+                opacity="0.7"
+            />
+
+        </svg>
+
+    </div>
+
+</button>
     <!-- Message Input -->
     <input
         id="message-input"
         class="input-box"
         placeholder="Type a message"
         autocomplete="off"
-    />
+    >
 
     <!-- Send Button -->
     <button id="send-btn" type="button">
@@ -1235,55 +1770,271 @@ body.dark-mode .attachment-file {
     </button>
 
 </div>
-
-<!-- File Preview -->
-<div id="file-preview">
-
-    <div class="file-preview-content">
-
-        <i
-            id="file-preview-icon"
-            class="fas fa-file file-preview-icon">
-        </i>
-
-        <div class="file-preview-info">
-
-            <div
-                id="file-preview-name"
-                class="file-preview-name">
+            <!-- File Preview -->
+            <div id="file-preview">
+                <div class="file-preview-content">
+                    <i id="file-preview-icon" class="fas fa-file file-preview-icon"></i>
+                    <div class="file-preview-info">
+                        <div id="file-preview-name" class="file-preview-name"></div>
+                        <div id="file-preview-size" class="file-preview-size"></div>
+                    </div>
+                    <button id="cancel-file" type="button" title="Cancel">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <button id="upload-file-btn" type="button">
+                        Upload
+                    </button>
+                </div>
             </div>
+        </div>
+        <script>
+const chatBox = document.getElementById("chat-box");
+const messageInput = document.getElementById("message-input");
 
-            <div
-                id="file-preview-size"
-                class="file-preview-size">
+const currentUser = "{{ request.user.username }}";
+const currentUserId = Number("{{ request.user.id }}");
+const userId = "{{ other_user.id }}";
+// =========================================
+// AI ASSISTANT
+// =========================================
+
+const aiButton = document.getElementById("ai-btn");
+
+
+// Get CSRF token
+function getCSRFToken() {
+
+    const csrfInput =
+        document.querySelector(
+            '[name=csrfmiddlewaretoken]'
+        );
+
+    if (csrfInput) {
+        return csrfInput.value;
+    }
+
+    return null;
+}
+
+// =========================================
+// ADD AI PROMPT TO CHAT
+// =========================================
+
+function appendAIPrompt(prompt) {
+
+    const msgHtml = `
+        <div
+            class="msg-wrapper"
+            style="
+                display:flex;
+                flex-direction:column;
+                width:100%;
+            "
+        >
+
+            <div class="bubble sent ai-history-prompt">
+
+                ${escapeHtml(prompt)}
+
             </div>
 
         </div>
+    `;
 
-        <button
-            id="cancel-file"
-            type="button"
-            title="Cancel">
-            <i class="fas fa-times"></i>
-        </button>
+    chatBox.insertAdjacentHTML(
+        "beforeend",
+        msgHtml
+    );
 
-        <button
-            id="upload-file-btn"
-            type="button">
-            Upload
-        </button>
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
 
-    </div>
 
-</div>
-    </div>
+// Add AI response to chat
+function appendAIMessage(message) {
 
-    <script>
-      const chatBox = document.getElementById("chat-box");
-      const messageInput = document.getElementById("message-input");
-      const currentUser = "{{ request.user.username }}";
-      const userId = "{{ other_user.id }}";
+    const msgHtml = `
+        <div
+            class="msg-wrapper"
+            style="
+                display:flex;
+                flex-direction:column;
+                width:100%;
+            "
+        >
 
+            <div
+                class="bubble received"
+                style="
+                    border-left: 3px solid var(--wa-teal);
+                "
+            >
+
+                <div
+                    style="
+                        font-size: 0.75rem;
+                        color: var(--wa-teal);
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                    "
+                >
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    AI Assistant
+                </div>
+
+                ${escapeHtml(message)}
+
+            </div>
+
+        </div>
+    `;
+
+    chatBox.insertAdjacentHTML(
+        "beforeend",
+        msgHtml
+    );
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
+
+
+// Ask AI
+async function askAIAssistant(prompt) {
+
+    try {
+
+        console.log(
+            "AI: sending request..."
+        );
+
+        const csrfToken =
+            getCSRFToken();
+
+        const response =
+            await fetch(
+                "/ai-assistant/",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "X-CSRFToken":
+                            csrfToken
+                    },
+
+                    body: JSON.stringify({
+                        prompt: prompt
+                    })
+                }
+            );
+
+
+        console.log(
+            "AI: HTTP status:",
+            response.status
+        );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "AI response:",
+            data
+        );
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error ||
+                "AI request failed."
+            );
+        }
+
+
+        appendAIMessage(
+            data.answer
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "AI ERROR:",
+            error
+        );
+
+
+        appendAIMessage(
+            "Sorry, I could not get a response from the AI."
+        );
+
+
+    } finally {
+
+        aiButton.classList.remove(
+            "loading"
+        );
+
+        aiButton.disabled = false;
+    }
+}
+
+
+// AI button click
+aiButton.addEventListener(
+    "click",
+    async function () {
+
+        const prompt =
+            messageInput.value.trim();
+
+
+        if (!prompt) {
+
+            messageInput.focus();
+
+            return;
+        }
+
+
+        // Prevent multiple requests
+        aiButton.disabled = true;
+
+        aiButton.classList.add(
+            "loading"
+        );
+
+
+        // Show user's AI prompt immediately
+        appendAIPrompt(prompt);
+
+
+        // Clear input
+        messageInput.value = "";
+
+
+        await askAIAssistant(
+            prompt
+        );
+
+    }
+);
+       function escapeHtml(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent = text;
+
+    return div.innerHTML;
+}
       /* ===== FILE SHARING ===== */
 
 const attachBtn = document.getElementById("attach-btn");
@@ -1530,8 +2281,8 @@ filePreview.style.display = "none";
 
 function appendFileMessage(data) {
 
-    const isMe =
-        data.sender === currentUser;
+  const isMe =
+    Number(data.sender_id) === currentUserId;
 
 
     const bubbleClass =
@@ -1615,29 +2366,35 @@ function appendFileMessage(data) {
     }
 
 
-    /* ==============================
-       AUDIO
-       ============================== */
+/* ==============================
+   AUDIO
+   ============================== */
+else if (
+    fileType.startsWith("audio/")
+) {
+    fileContent = `
+        <div class="audio-message">
+            <div class="audio-file-icon">
+                <i class="fas fa-music"></i>
+            </div>
 
-    else if (
-        fileType.startsWith("audio/")
-    ) {
+            <div class="audio-file-info">
+                <div class="audio-file-name">
+                    ${fileName}
+                </div>
 
-        fileContent = `
-            <audio
-                class="attachment-audio"
-                controls>
-
-                <source
-                    src="${fileUrl}"
-                    type="${fileType}">
-
-                Your browser does not support
-                audio playback.
-
-            </audio>
-        `;
-    }
+                <audio
+                    class="attachment-audio"
+                    controls
+                    preload="metadata"
+                >
+                    <source src="${fileUrl}">
+                    Your browser does not support audio playback.
+                </audio>
+            </div>
+        </div>
+    `;
+}
 
 
     /* ==============================
@@ -1774,87 +2531,164 @@ function escapeHtml(value) {
 
     return div.innerHTML;
 }
-      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+/* ===== WebSocket ===== */
+      const protocol =
+    window.location.protocol === "https:"
+        ? "wss"
+        : "ws";
 
-      const socket = new WebSocket(
-      
-        `${protocol}://${window.location.host}/ws/chat/${userId}/`,
-      );
+const socket = new WebSocket(
+  
+  `${protocol}://${window.location.host}/ws/chat/${userId}/`,
+);
 
-      socket.onmessage = async function (e) {
-        const data = JSON.parse(e.data);
-                // =====================================
-        // REAL-TIME FILE MESSAGE
-        // =====================================
 
-if (data.type === "file_message") {
+// =========================================
+// WEBSOCKET STATUS
+// =========================================
 
-    // The sender already displayed the file
-    // immediately after the HTTP upload succeeded.
-    if (data.sender === currentUser) {
+socket.onopen = function () {
+
+    console.log(
+        "=============================="
+    );
+
+    console.log(
+        "WEBSOCKET CONNECTED"
+    );
+
+    console.log(
+        "=============================="
+    );
+};
+
+
+socket.onerror = function (error) {
+
+    console.error(
+        "WEBSOCKET ERROR:",
+        error
+    );
+};
+
+
+socket.onclose = function (event) {
+
+    console.error(
+        "WEBSOCKET CLOSED:",
+        event.code,
+        event.reason
+    );
+};
+
+
+
+    socket.onmessage = async function (e) {
+
+    const data = JSON.parse(e.data);
+
+    console.log(
+        "WEBSOCKET MESSAGE RECEIVED:",
+        data
+    );
+
+
+    // =========================================
+    // NORMAL CHAT MESSAGE
+    // =========================================
+
+    if (data.type === "chat_message") {
+
+const isMe =
+    Number(data.sender_id) === currentUserId;
+
+
+        const msgHtml = `
+            <div
+                class="msg-wrapper"
+                style="
+                    display:flex;
+                    flex-direction:column;
+                    width:100%;
+                "
+            >
+
+                <div
+                    class="bubble ${
+                        isMe
+                            ? "sent"
+                            : "received"
+                    }"
+                >
+
+                    ${escapeHtml(data.message)}
+
+                </div>
+
+            </div>
+        `;
+
+
+        chatBox.insertAdjacentHTML(
+            "beforeend",
+            msgHtml
+        );
+
+
+        chatBox.scrollTop =
+            chatBox.scrollHeight;
+
+
         return;
     }
 
-    // Receiver displays the file through WebSocket.
-    appendFileMessage(data);
 
+    // =========================================
+    // FILE MESSAGE
+    // =========================================
+
+    if (data.type === "file_message") {
+
+        console.log(
+            "FILE MESSAGE RECEIVED:",
+            data
+        );
+
+
+        // The sender already displays
+        // the uploaded file locally.
+       if (
+    Number(data.sender_id) === currentUserId
+) {
     return;
 }
-        // Ignore own signaling messages
-        if (data.sender === currentUser && data.type !== undefined) {
-          return;
-        }
-        console.log("WS MESSAGE:", data);
 
-        // ===== CHAT =====
-        if (data.message !== undefined) {
-          const isMe = data.sender === currentUser;
 
-          const msgHtml = `
-<div class="msg-wrapper" style="display:flex; flex-direction:column; width:100%;">
-  
-  <div class="bubble ${isMe ? "sent" : "received"}">
-    ${data.message}
+        appendFileMessage(data);
 
-    <div class="msg-menu-wrapper">
-      <i class="fas fa-ellipsis-vertical"
-         onclick="toggleMsgMenu('new_${Date.now()}')"
-         style="cursor:pointer; font-size:12px;">
-      </i>
+        return;
+    }
 
-      <div class="msg-dropdown" id="menu-new_${Date.now()}">
-        ${
-          isMe
-            ? `
-              <form method="POST" action="#">
-                <button type="button">Remove</button>
-              </form>
 
-              <form method="POST" action="#">
-                <button type="button">Unsend</button>
-              </form>
-            `
-            : `
-              <form method="POST" action="#">
-                <button type="button">Remove</button>
-              </form>
-            `
-        }
-      </div>
-    </div>
-  </div>
+    // =========================================
+    // HOME UPDATE
+    // =========================================
 
-</div>
-`;
-          chatBox.insertAdjacentHTML("beforeend", msgHtml);
-          chatBox.scrollTop = chatBox.scrollHeight;
-          return;
-        }
+    if (data.type === "update_home") {
+
+        console.log(
+            "HOME UPDATE RECEIVED"
+        );
+
+        return;
+    }
+
+
 
         // ===== CALL REQUEST =====
 if (
-  data.type === "call_request" &&
-  data.sender !== currentUser
+    data.type === "call_request" &&
+    Number(data.sender_id) !== currentUserId
 ) {
        // Ignore stale/replayed calls after refresh
 if (
@@ -1900,6 +2734,23 @@ incomingCall.style.visibility = "visible";
 
   return;
 }
+// =========================================
+// IGNORE MY OWN WEBRTC SIGNALS
+// =========================================
+
+if (
+    [
+        "offer",
+        "answer",
+        "candidate",
+        "call_accepted",
+        "call_rejected",
+        "call_ended"
+    ].includes(data.type) &&
+    Number(data.sender_id) === currentUserId
+) {
+    return;
+}
 
         // ===== CALL ACCEPTED =====
         if (data.type === "call_accepted") {
@@ -1924,8 +2775,8 @@ incomingCall.style.visibility = "visible";
         // ===== ANSWER =====
         if (data.type === "answer") {
           await peerConnection.setRemoteDescription(
-            new RTCSessionDescription(data.answer),
-          );
+    new RTCSessionDescription(data.answer)
+);
 
           remoteDescriptionSet = true;
 
@@ -2000,34 +2851,86 @@ if (data.type === "call_ended") {
 }
       };
 
-      document.getElementById("send-btn").onclick = () => {
-        if (messageInput.value.trim() !== "") {
-          socket.send(
-            JSON.stringify({
-              message: messageInput.value.trim(),
-              sender: currentUser,
-            }),
-          );
-          messageInput.value = "";
+document.getElementById("send-btn").onclick = () => {
+
+    const message = messageInput.value.trim();
+
+    if (message === "") {
+        return;
+    }
+
+    if (socket.readyState !== WebSocket.OPEN) {
+
+        console.error(
+            "WebSocket is not connected.",
+            "readyState:",
+            socket.readyState
+        );
+
+        alert(
+            "Chat connection is not available."
+        );
+
+        return;
+    }
+
+    socket.send(
+    JSON.stringify({
+        type: "chat_message",
+        message: message,
+    })
+);
+
+    messageInput.value = "";
+};
+    messageInput.addEventListener(
+    "keydown",
+    function (e) {
+
+        if (e.key !== "Enter") {
+            return;
         }
-      };
 
-      messageInput.addEventListener("keydown", function (e) {
-        if (e.key === "Enter") {
-          e.preventDefault(); // VERY IMPORTANT
 
-          if (messageInput.value.trim() !== "") {
-            socket.send(
-              JSON.stringify({
-                message: messageInput.value,
-                sender: currentUser,
-              }),
+        e.preventDefault();
+
+
+        const message =
+            messageInput.value.trim();
+
+
+        if (!message) {
+            return;
+        }
+
+
+        if (
+            socket.readyState !==
+            WebSocket.OPEN
+        ) {
+
+            console.error(
+                "WebSocket is not connected."
             );
 
-            messageInput.value = "";
-          }
+            return;
         }
-      });
+
+
+        socket.send(
+            JSON.stringify({
+
+                type: "chat_message",
+
+                message: message
+
+            })
+        );
+
+
+        messageInput.value = "";
+    }
+);
       let localStream;
       let peerConnection;
       let isCaller = false;
@@ -2036,6 +2939,8 @@ if (data.type === "call_ended") {
       let callTimerInterval = null;
       let isMuted = false;
       let isCameraOff = false;
+      let pendingCandidates = [];
+       let remoteDescriptionSet = false;
       const config = {
         iceServers: [
           {
@@ -2124,6 +3029,20 @@ ringtone.currentTime = 0;
 
         peerConnection = new RTCPeerConnection(config);
 
+        peerConnection.onconnectionstatechange = () => {
+    console.log(
+        "WebRTC connection state:",
+        peerConnection.connectionState
+    );
+};
+
+peerConnection.oniceconnectionstatechange = () => {
+    console.log(
+        "ICE connection state:",
+        peerConnection.iceConnectionState
+    );
+};
+
         // Add local tracks
         localStream.getTracks().forEach((track) => {
           peerConnection.addTrack(track, localStream);
@@ -2207,7 +3126,24 @@ ringtone.currentTime = 0;
           document.getElementById("remoteVideo").style.display = "none";
         }
 
+
         peerConnection = new RTCPeerConnection(config);
+
+peerConnection.onconnectionstatechange = () => {
+    console.log(
+        "WebRTC connection state:",
+        peerConnection.connectionState
+    );
+};
+
+peerConnection.oniceconnectionstatechange = () => {
+    console.log(
+        "ICE connection state:",
+        peerConnection.iceConnectionState
+    );
+};
+
+// existing code below...
 
         // Add local tracks
         localStream.getTracks().forEach((track) => {
@@ -2585,12 +3521,8 @@ window.addEventListener("pageshow", () => {
 
   incomingUI.style.visibility = "hidden";
 });
-
-</script>
-
-    <div
-      id="call-container"
-      style="
+        </script>
+        <div id="call-container" style="
         display: none;
         position: fixed;
         top: 0;
@@ -2600,18 +3532,18 @@ window.addEventListener("pageshow", () => {
         background: black;
         z-index: 9999;
       ">
-      <video
-        id="remoteVideo"
-        autoplay
-        playsinline
-        style="width: 100%; height: 100%; object-fit: cover"></video>
-
-      <video
-        id="localVideo"
-        autoplay
-        playsinline
-        muted
-        style="
+            <video
+                id="remoteVideo"
+                autoplay
+                playsinline
+                style="width: 100%; height: 100%; object-fit: cover"
+            ></video>
+            <video
+                id="localVideo"
+                autoplay
+                playsinline
+                muted
+                style="
           width: 22vw;
           max-width: 214px;
           min-width: 110px;
@@ -2637,11 +3569,9 @@ window.addEventListener("pageshow", () => {
           object-fit: cover;
 
           z-index: 99999;
-        "></video>
-
-      <div
-        id="call-timer"
-        style="
+        "
+            ></video>
+            <div id="call-timer" style="
           position: absolute;
           top: 23px;
           left: 50%;
@@ -2660,12 +3590,9 @@ window.addEventListener("pageshow", () => {
           color: rgba(255, 255, 255, 0.9);
           border-radius: 50px;
         ">
-        00:00
-      </div>
-
-      <div
-        id="call-controls"
-        style="
+                00:00
+            </div>
+            <div id="call-controls" style="
           position: absolute;
           bottom: 10px;
           left: 50%;
@@ -2690,11 +3617,8 @@ window.addEventListener("pageshow", () => {
 
           z-index: 999999;
         ">
-        <!-- Camera Button -->
-        <button
-          id="camera-btn"
-          onclick="toggleCamera()"
-          style="
+                <!-- Camera Button -->
+                <button id="camera-btn" onclick="toggleCamera()" style="
             width: 55px;
             height: 53px;
 
@@ -2710,14 +3634,10 @@ window.addEventListener("pageshow", () => {
 
             transition: 0.3s;
           ">
-          <i class="fas fa-video"></i>
-        </button>
-
-        <!-- Mic Button -->
-        <button
-          id="mute-btn"
-          onclick="toggleMute()"
-          style="
+                    <i class="fas fa-video"></i>
+                </button>
+                <!-- Mic Button -->
+                <button id="mute-btn" onclick="toggleMute()" style="
             width: 55px;
             height: 56px;
 
@@ -2733,13 +3653,10 @@ window.addEventListener("pageshow", () => {
 
             transition: 0.3s;
           ">
-          <i class="fas fa-microphone"></i>
-        </button>
-
-        <!-- End Call -->
-        <button
-          onclick="endCall()"
-          style="
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <!-- End Call -->
+                <button onclick="endCall()" style="
             width: 55px;
             height: 56px;
 
@@ -2757,98 +3674,57 @@ window.addEventListener("pageshow", () => {
 
             transition: 0.3s;
           ">
-          <i class="fas fa-phone-slash"></i>
-        </button>
-      </div>
-    </div>
-
-<div id="outgoing-call">
-
-  <div class="outgoing-page">
-
-    <div class="outgoing-main">
-
-      <div class="outgoing-avatar">
-        {{ other_user.username|slice:":1"|upper }}
-      </div>
-
-      <div class="outgoing-name">
-        {{ other_user.username }}
-      </div>
-
-      <div
-        class="outgoing-status"
-        id="outgoing-call-text">
-
-        Calling...
-
-      </div>
-
-    </div>
-
-    <div class="outgoing-bottom">
-
-<button
-  id="cancel-outgoing-call"
-  onclick="cancelOutgoingCall()">
-        <i class="fas fa-phone-slash"></i>
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-<div id="incoming-call">
-
-  <div class="incoming-page">
-
-    <div class="incoming-main">
-
-      <div class="incoming-avatar">
-        {{ other_user.username|slice:":1"|upper }}
-      </div>
-
-      <div class="incoming-name">
-        {{ other_user.username }}
-      </div>
-
-      <div id="call-text" class="incoming-status">
-        Incoming Call...
-      </div>
-
-    </div>
-
-    <div class="incoming-actions">
-
-      <!-- DECLINE -->
-      <button
-        class="incoming-btn decline-btn"
-        onclick="rejectCall()">
-
-        <i class="fas fa-phone-slash"></i>
-
-      </button>
-
-      <!-- ACCEPT -->
-      <button
-        class="incoming-btn accept-btn"
-        onclick="acceptCall()">
-
-        <i class="fas fa-phone"></i>
-
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-    <!-- AUDIO CALL SCREEN -->
-    <div
-      id="audio-call-container"
-      style="
+                    <i class="fas fa-phone-slash"></i>
+                </button>
+            </div>
+        </div>
+        <div id="outgoing-call">
+            <div class="outgoing-page">
+                <div class="outgoing-main">
+                    <div class="outgoing-avatar">
+                        {{ other_user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="outgoing-name">
+                        {{ other_user.username }}
+                    </div>
+                    <div class="outgoing-status" id="outgoing-call-text">
+                        Calling...
+                    </div>
+                </div>
+                <div class="outgoing-bottom">
+                    <button id="cancel-outgoing-call" onclick="cancelOutgoingCall()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="incoming-call">
+            <div class="incoming-page">
+                <div class="incoming-main">
+                    <div class="incoming-avatar">
+                        {{ other_user.username|slice:":1"|upper }}
+                    </div>
+                    <div class="incoming-name">
+                        {{ other_user.username }}
+                    </div>
+                    <div id="call-text" class="incoming-status">
+                        Incoming Call...
+                    </div>
+                </div>
+                <div class="incoming-actions">
+                    <!-- DECLINE -->
+                    <button class="incoming-btn decline-btn" onclick="rejectCall()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                    <!-- ACCEPT -->
+                    <button class="incoming-btn accept-btn" onclick="acceptCall()">
+                        <i class="fas fa-phone"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- AUDIO CALL SCREEN -->
+        <div id="audio-call-container" style="
         display: none;
         position: fixed;
         inset: 0;
@@ -2858,9 +3734,8 @@ window.addEventListener("pageshow", () => {
 
         overflow: hidden;
       ">
-      <!-- Background Circle -->
-      <div
-        style="
+            <!-- Background Circle -->
+            <div style="
           position: absolute;
           width: 500px;
           height: 500px;
@@ -2872,10 +3747,8 @@ window.addEventListener("pageshow", () => {
           top: -180px;
           left: -120px;
         "></div>
-
-      <!-- Content -->
-      <div
-        style="
+            <!-- Content -->
+            <div style="
           height: 100%;
 
           display: flex;
@@ -2884,9 +3757,8 @@ window.addEventListener("pageshow", () => {
 
           padding-top: 80px;
         ">
-        <!-- Avatar Animation -->
-        <div
-          style="
+                <!-- Avatar Animation -->
+                <div style="
             width: 170px;
             height: 170px;
 
@@ -2900,8 +3772,7 @@ window.addEventListener("pageshow", () => {
 
             animation: pulseRing 2s infinite;
           ">
-          <div
-            style="
+                    <div style="
               width: 145px;
               height: 145px;
 
@@ -2919,38 +3790,31 @@ window.addEventListener("pageshow", () => {
 
               border: 4px solid rgba(255, 255, 255, 0.3);
             ">
-            {{ other_user.username|slice:":1"|upper }}
-          </div>
-        </div>
-
-        <!-- Username -->
-        <div
-          style="
+                        {{ other_user.username|slice:":1"|upper }}
+                    </div>
+                </div>
+                <!-- Username -->
+                <div style="
             margin-top: 25px;
 
             color: white;
             font-size: 44px;
             font-weight: 500;
           ">
-          {{ other_user.username }}
-        </div>
-
-        <!-- Call Type -->
-        <div
-          style="
+                    {{ other_user.username }}
+                </div>
+                <!-- Call Type -->
+                <div style="
             margin-top: 10px;
 
             color: rgba(255, 255, 255, 0.6);
 
             font-size: 22px;
           ">
-          Audio Call
-        </div>
-
-        <!-- Timer -->
-        <div
-          id="audio-call-timer"
-          style="
+                    Audio Call
+                </div>
+                <!-- Timer -->
+                <div id="audio-call-timer" style="
             margin-top: 15px;
 
             color: rgba(255, 255, 255, 0.75);
@@ -2960,13 +3824,10 @@ window.addEventListener("pageshow", () => {
 
             letter-spacing: 3px;
           ">
-          00:00
-        </div>
-
-        <!-- Bottom Controls -->
-<div
-  id="audio-call-controls"
-  style="
+                    00:00
+                </div>
+                <!-- Bottom Controls -->
+                <div id="audio-call-controls" style="
     margin-top: auto;
     margin-bottom: 30px;
 
@@ -2986,13 +3847,9 @@ window.addEventListener("pageshow", () => {
     border-radius: 50px;
 
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-  "
->
-  <!-- Mic Button -->
-  <button
-    id="audio-mute-btn"
-    onclick="toggleMute()"
-    style="
+  ">
+                    <!-- Mic Button -->
+                    <button id="audio-mute-btn" onclick="toggleMute()" style="
       width: 55px;
       height: 55px;
 
@@ -3012,15 +3869,11 @@ window.addEventListener("pageshow", () => {
 
       cursor: pointer;
       transition: 0.3s;
-    "
-  >
-    <i class="fas fa-microphone"></i>
-  </button>
-
-  <!-- End Call -->
-  <button
-    onclick="endCall()"
-    style="
+    ">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <!-- End Call -->
+                    <button onclick="endCall()" style="
       width: 55px;
       height: 55px;
 
@@ -3041,17 +3894,14 @@ window.addEventListener("pageshow", () => {
       box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
 
       transition: 0.3s;
-    "
-  >
-    <i class="fas fa-phone-slash"></i>
-  </button>
-</div>
-    </div>
-    <audio id="remoteAudio" autoplay playsinline></audio>
-    <audio id="ringtone" loop>
-      <source
-        src="https://actions.google.com/sounds/v1/alarms/phone_alerts_and_rings.ogg"
-        type="audio/ogg" />
-    </audio>
-  </body>
-</html>
+    ">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+            <audio id="remoteAudio" autoplay playsinline></audio>
+            <audio id="ringtone" loop>
+                <source src="https://actions.google.com/sounds/v1/alarms/phone_alerts_and_rings.ogg" type="audio/ogg">
+            </audio>
+        </body>
+    </html>
