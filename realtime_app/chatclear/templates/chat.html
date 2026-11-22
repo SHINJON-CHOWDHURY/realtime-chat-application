@@ -299,6 +299,32 @@ overflow-wrap: break-word;
     line-height: 1.5;
 }
 
+/* AI response action buttons */
+
+.ai-response-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.ai-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-main);
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.ai-copy-btn:hover {
+    background: var(--bg-sent);
+}
+
 /* =========================================
    MODERN AI RESPONSE INTERFACE
    ========================================= */
@@ -439,6 +465,149 @@ overflow-wrap: break-word;
        background: var(--input-bg);
        color: var(--text-main);
       }
+
+      /* =========================================
+   DEDICATED AI PROMPT COMPOSER
+   ========================================= */
+
+#ai-composer {
+    display: none;
+    align-items: flex-end;
+    gap: 12px;
+
+    width: calc(100% - 28px);
+    max-width: 1100px;
+
+    margin: 0 auto 12px;
+    padding: 12px;
+
+    background: var(--bg-header);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.10);
+
+    position: relative;
+    z-index: 1000;
+}
+
+#ai-composer.active {
+    display: flex;
+}
+
+#ai-prompt-input {
+    flex: 1;
+    min-width: 0;
+
+    min-height: 48px;
+    max-height: 160px;
+
+    resize: vertical;
+
+    padding: 13px 15px;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    outline: none;
+
+    background: var(--input-bg);
+    color: var(--text-main);
+
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+#ai-prompt-input::placeholder {
+    color: var(--text-sub);
+}
+
+#ai-prompt-input:focus {
+    border-color: #8b5cf6;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+
+.ai-composer-send,
+.ai-composer-close {
+    width: 46px;
+    height: 46px;
+
+    flex-shrink: 0;
+
+    border: none;
+    border-radius: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.ai-composer-send {
+    background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    color: white;
+}
+
+.ai-composer-send:hover {
+    opacity: 0.9;
+}
+
+.ai-composer-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ai-composer-close {
+    background: transparent;
+    color: var(--text-sub);
+}
+
+.ai-composer-close:hover {
+    background: var(--border);
+}
+
+/* Hide normal WhatsApp controls while AI mode is active */
+
+#messageBox.ai-mode #attach-btn,
+#messageBox.ai-mode #message-input,
+#messageBox.ai-mode #send-btn {
+    display: none;
+}
+
+#messageBox.ai-mode {
+    width: fit-content;
+    min-width: 62px;
+    height: 58px;
+    margin-left: auto;
+    margin-right: 14px;
+    justify-content: center;
+}
+
+/* Mobile adjustments */
+
+@media (max-width: 600px) {
+    #ai-composer {
+        width: calc(100% - 16px);
+        padding: 9px;
+        gap: 7px;
+    }
+
+    #ai-prompt-input {
+        font-size: 14px;
+        padding: 11px;
+    }
+
+    .ai-composer-send,
+    .ai-composer-close {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+
       .input-box::placeholder {
 
        color: var(--text-sub);
@@ -1354,6 +1523,12 @@ body.dark-mode .attachment-file {
               <div class="ai-response-text saved-ai-response">
               {{ ai.response|escape }}
               </div>
+              <div class="ai-response-actions">
+    <button type="button" class="ai-copy-btn" title="Copy response">
+        <i class="fas fa-copy"></i>
+        <span>Copy</span>
+    </button>
+</div>
 
             </div>
         </div>
@@ -1838,6 +2013,40 @@ body.dark-mode .attachment-file {
     </button>
 
 </div>
+<!-- =========================================
+     DEDICATED AI PROMPT COMPOSER
+     ========================================= -->
+
+<div id="ai-composer">
+
+    <!-- AI prompt input -->
+    <textarea
+        id="ai-prompt-input"
+        placeholder="Ask anything..."
+        rows="1"
+    ></textarea>
+
+    <!-- Send AI prompt -->
+    <button
+        type="button"
+        id="ai-send-btn"
+        class="ai-composer-send"
+        title="Send AI prompt"
+    >
+        <i class="fas fa-paper-plane"></i>
+    </button>
+
+    <!-- Close AI mode -->
+    <button
+        type="button"
+        id="ai-close-btn"
+        class="ai-composer-close"
+        title="Close AI composer"
+    >
+        <i class="fas fa-times"></i>
+    </button>
+
+</div>
             <!-- File Preview -->
             <div id="file-preview">
                 <div class="file-preview-content">
@@ -1986,6 +2195,13 @@ function appendAIMessage(message) {
                      ${DOMPurify.sanitize(marked.parse(message))}
                      </div>
 
+                                   <div class="ai-response-actions">
+              <button type="button" class="ai-copy-btn" title="Copy response">
+                     <i class="fas fa-copy"></i>
+                     <span>Copy</span>
+              </button>
+              </div>
+
             </div>
 
         </div>
@@ -2089,45 +2305,147 @@ async function askAIAssistant(prompt) {
 }
 
 
-// AI button click
-aiButton.addEventListener(
-    "click",
-    async function () {
+// =========================================
+// DEDICATED AI COMPOSER CONTROLS
+// =========================================
 
-        const prompt =
-            messageInput.value.trim();
-
-
-        if (!prompt) {
-
-            messageInput.focus();
-
-            return;
-        }
+const aiComposer = document.getElementById("ai-composer");
+const aiPromptInput = document.getElementById("ai-prompt-input");
+const aiSendButton = document.getElementById("ai-send-btn");
+const aiCloseButton = document.getElementById("ai-close-btn");
 
 
-        // Prevent multiple requests
-        aiButton.disabled = true;
+// Open and close AI mode
+aiButton.addEventListener("click", function () {
 
-        aiButton.classList.add(
-            "loading"
-        );
+    if (aiButton.disabled) {
+        return;
+    }
+
+    const isOpening = !aiComposer.classList.contains("active");
+
+    aiComposer.classList.toggle("active", isOpening);
+    document.getElementById("messageBox").classList.toggle("ai-mode", isOpening);
+
+    if (isOpening) {
+        aiPromptInput.focus();
+    } else {
+        aiPromptInput.value = "";
+    }
+
+});
 
 
-        // Show user's AI prompt immediately
-        appendAIPrompt(prompt);
+// Close AI composer
+aiCloseButton.addEventListener("click", function () {
+
+    if (aiButton.disabled) {
+        return;
+    }
+
+    aiComposer.classList.remove("active");
+    document.getElementById("messageBox").classList.remove("ai-mode");
+
+    aiPromptInput.value = "";
+
+});
 
 
-        // Clear input
-        messageInput.value = "";
+// Send AI prompt
+async function sendAIPrompt() {
+
+    const prompt = aiPromptInput.value.trim();
+
+    if (!prompt || aiButton.disabled) {
+        return;
+    }
+
+    // Disable buttons while AI is processing
+    aiButton.disabled = true;
+    aiSendButton.disabled = true;
+
+    aiButton.classList.add("loading");
+
+    // Display the prompt in the conversation
+    appendAIPrompt(prompt);
+
+    // Clear the dedicated AI input
+    aiPromptInput.value = "";
+
+    // Request AI response
+    await askAIAssistant(prompt);
+
+    // Restore the composer
+    aiSendButton.disabled = false;
+    aiPromptInput.focus();
+
+}
 
 
-        await askAIAssistant(
-            prompt
-        );
+// Send button click
+aiSendButton.addEventListener("click", sendAIPrompt);
+
+
+// Enter sends prompt; Shift + Enter creates a new line
+aiPromptInput.addEventListener("keydown", function (event) {
+
+    if (event.key === "Enter" && !event.shiftKey) {
+
+        event.preventDefault();
+
+        sendAIPrompt();
 
     }
-);
+
+});
+
+// =========================================
+// COPY AI RESPONSE
+// =========================================
+
+chatBox.addEventListener("click", async function(event) {
+
+    const copyButton = event.target.closest(".ai-copy-btn");
+
+    if (!copyButton) {
+        return;
+    }
+
+    const responseContainer = copyButton.closest(".ai-history-response, .ai-live-response");
+
+    if (!responseContainer) {
+        return;
+    }
+
+    const responseText = responseContainer.querySelector(".ai-response-text");
+
+    if (!responseText) {
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(
+            responseText.innerText.trim()
+        );
+
+        const originalText = copyButton.innerHTML;
+
+        copyButton.innerHTML =
+            '<i class="fas fa-check"></i> <span>Copied!</span>';
+
+        setTimeout(function() {
+            copyButton.innerHTML = originalText;
+        }, 2000);
+
+    } catch (error) {
+
+        console.error("Copy failed:", error);
+        alert("Unable to copy the response.");
+
+    }
+
+});
        function escapeHtml(text) {
 
     const div =
