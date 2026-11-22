@@ -299,6 +299,74 @@ overflow-wrap: break-word;
     line-height: 1.5;
 }
 
+/* =========================================
+   MODERN AI RESPONSE INTERFACE
+   ========================================= */
+
+/* Main AI response card */
+.ai-history-response,
+.ai-live-response {
+    width: min(100%, 900px) !important;
+    max-width: 100% !important;
+
+    padding: 18px 22px !important;
+
+    background: var(--bg-received);
+
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--wa-teal);
+
+    border-radius: 12px !important;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+/* AI response content */
+.ai-response-text {
+    color: var(--text-main);
+
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+
+    font-size: 15px;
+    line-height: 1.75;
+}
+
+/* AI response label */
+.ai-history-response .ai-message-label,
+.ai-live-response .ai-message-label {
+    font-size: 13px;
+    font-weight: 600;
+
+    margin-bottom: 12px;
+
+    color: var(--wa-teal);
+}
+
+/* Better spacing between AI messages */
+.ai-history-response p,
+.ai-live-response p {
+    margin: 0 0 12px;
+}
+
+/* Responsive AI response */
+@media (max-width: 768px) {
+
+    .ai-history-response,
+    .ai-live-response {
+        width: 100% !important;
+        padding: 14px !important;
+        font-size: 14px;
+    }
+
+    .ai-response-text {
+        font-size: 14px;
+    }
+}
+
       /* Message 3-dot */
       .msg-menu-wrapper {
         position: absolute;
@@ -1283,9 +1351,9 @@ body.dark-mode .attachment-file {
                     AI Assistant
                 </div>
 
-                <div class="ai-response-text">
-                    {{ ai.response }}
-                </div>
+              <div class="ai-response-text saved-ai-response">
+              {{ ai.response|escape }}
+              </div>
 
             </div>
         </div>
@@ -1785,15 +1853,55 @@ body.dark-mode .attachment-file {
                         Upload
                     </button>
                 </div>
-            </div>
-        </div>
-        <script>
+</div>
+</div>
+
+<!-- Markdown parser -->
+<script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+
+<!-- HTML sanitizer -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.18/dist/purify.min.js"></script>
+<!-- Syntax highlighting library -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+<!-- Main JavaScript -->
+<script>
 const chatBox = document.getElementById("chat-box");
 const messageInput = document.getElementById("message-input");
 
 const currentUser = "{{ request.user.username }}";
 const currentUserId = Number("{{ request.user.id }}");
 const userId = "{{ other_user.id }}";
+// =========================================
+// FORMAT SAVED AI RESPONSES
+// =========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // Select all previously saved AI responses
+    const savedResponses = document.querySelectorAll(
+        ".saved-ai-response"
+    );
+
+    savedResponses.forEach(function (element) {
+
+        // Read the original response text
+        const markdownText = element.textContent;
+
+        // Convert Markdown into HTML and sanitize it
+        const formattedHTML = DOMPurify.sanitize(
+            marked.parse(markdownText)
+        );
+
+        // Display the formatted response
+        element.innerHTML = formattedHTML;
+
+    });
+
+});
+
 // =========================================
 // AI ASSISTANT
 // =========================================
@@ -1851,52 +1959,46 @@ function appendAIPrompt(prompt) {
 }
 
 
-// Add AI response to chat
+// Add a new AI response to the chat
 function appendAIMessage(message) {
 
+    // Build the AI response HTML
     const msgHtml = `
         <div
             class="msg-wrapper"
             style="
-                display:flex;
-                flex-direction:column;
-                width:100%;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
             "
         >
 
-            <div
-                class="bubble received"
-                style="
-                    border-left: 3px solid var(--wa-teal);
-                "
-            >
+            <div class="bubble received ai-live-response">
 
-                <div
-                    style="
-                        font-size: 0.75rem;
-                        color: var(--wa-teal);
-                        font-weight: 600;
-                        margin-bottom: 4px;
-                    "
-                >
-                    <i class="fas fa-wand-magic-sparkles"></i>
+                <!-- AI response label -->
+                <div class="ai-message-label">
+                    <span class="ai-history-spark">✦</span>
                     AI Assistant
                 </div>
 
-                ${escapeHtml(message)}
+                <!-- AI response content -->
+                <div class="ai-response-text">
+                     ${DOMPurify.sanitize(marked.parse(message))}
+                     </div>
 
             </div>
 
         </div>
     `;
 
+    // Insert the response into the chat
     chatBox.insertAdjacentHTML(
         "beforeend",
         msgHtml
     );
 
-    chatBox.scrollTop =
-        chatBox.scrollHeight;
+    // Automatically scroll to the latest response
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 
