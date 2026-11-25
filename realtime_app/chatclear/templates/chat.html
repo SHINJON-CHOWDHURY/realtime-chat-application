@@ -2154,6 +2154,39 @@ const messageInput = document.getElementById("message-input");
 const currentUser = "{{ request.user.username }}";
 const currentUserId = Number("{{ request.user.id }}");
 const userId = "{{ other_user.id }}";
+
+// =========================================
+// AUTOMATIC SCROLL TO LATEST CHAT
+// =========================================
+
+function scrollToLatestMessage() {
+
+    if (!chatBox) {
+        return;
+    }
+
+    chatBox.scrollTop = chatBox.scrollHeight;
+
+}
+
+
+// Scroll after the page has loaded
+window.addEventListener("load", function () {
+
+    // First scroll
+    scrollToLatestMessage();
+
+    // Second scroll after rendering
+    requestAnimationFrame(function () {
+
+        scrollToLatestMessage();
+
+        // Final adjustment after layout settles
+        setTimeout(scrollToLatestMessage, 150);
+
+    });
+
+});
 // =========================================
 // FORMAT SAVED AI RESPONSES
 // =========================================
