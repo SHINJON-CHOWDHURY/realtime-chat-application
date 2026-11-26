@@ -189,21 +189,42 @@ def chat_view(request, user_id):
         ]
     ).order_by("timestamp")
 
-    visible_messages = []
+    visible_messages = list(messages)
 
-    for msg in messages:
+    # Retrieve the current user's saved AI conversations.
+    ai_conversations = list(
+        AIConversation.objects.filter(
+            user=request.user
+        ).order_by("timestamp")
+    )
 
-        visible_messages.append(msg)
+    # Combine normal messages and AI interactions into one chronological timeline.
+    conversation_timeline = []
+
+    for msg in visible_messages:
+        conversation_timeline.append({
+            "type": "message",
+            "timestamp": msg.timestamp,
+            "message": msg,
+        })
+
+    for ai in ai_conversations:
+        conversation_timeline.append({
+            "type": "ai",
+            "timestamp": ai.timestamp,
+            "ai": ai,
+        })
+
+    conversation_timeline.sort(key=lambda entry: entry["timestamp"])
 
     return render(
         request,
         "chat.html",
         {
-        "messages": visible_messages,
-        "other_user": other_user,
-        "ai_conversations": AIConversation.objects.filter(
-            user=request.user
-        ).order_by("timestamp")
+            "messages": visible_messages,
+            "other_user": other_user,
+            "ai_conversations": ai_conversations,
+            "conversation_timeline": conversation_timeline,
         }
     )
 # =========================
