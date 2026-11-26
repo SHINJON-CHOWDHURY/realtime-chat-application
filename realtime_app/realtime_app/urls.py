@@ -38,6 +38,13 @@ path(
         views.chat_view,
         name='chat'
     ),
+    
+    # AI INSIGHTS FOR NORMAL CHAT
+path(
+    'chat/<int:user_id>/ai-insights/',
+    views.chat_ai_insights,
+    name='chat_ai_insights'
+),
 
 # FILE UPLOAD
 path(

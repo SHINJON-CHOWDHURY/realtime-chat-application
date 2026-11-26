@@ -579,3 +579,324 @@ def ai_assistant(request):
             },
             status=500
         )
+        
+        # ============================================
+# AI INSIGHTS FOR NORMAL CHAT CONVERSATIONS
+# ============================================
+
+@login_required
+@require_POST
+def chat_ai_insights(request, user_id):
+
+    try:
+
+        # =========================================
+        # 1. Get the other user
+        # =========================================
+
+        other_user = get_object_or_404(
+            User,
+            id=user_id
+        )
+
+        # Prevent analyzing a conversation with yourself
+        if other_user == request.user:
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "You cannot analyze a chat with yourself."
+                },
+                status=400
+            )
+
+
+        # =========================================
+        # 2. Read requested AI action
+        # =========================================
+
+        data = json.loads(request.body)
+
+        action = data.get("action", "").strip()
+
+
+        # =========================================
+        # 3. Validate requested action
+        # =========================================
+
+        allowed_actions = {
+
+            "summary",
+            "decisions",
+            "tasks",
+            "questions",
+            "replies"
+
+        }
+
+        if action not in allowed_actions:
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "Invalid AI action."
+                },
+                status=400
+            )
+
+
+        # =========================================
+        # 4. Retrieve messages between both users
+        # =========================================
+
+        messages = Message.objects.filter(
+
+            Q(
+                sender=request.user,
+                receiver=other_user,
+                deleted_for_sender=False
+            )
+
+            |
+
+            Q(
+                sender=other_user,
+                receiver=request.user,
+                deleted_for_receiver=False
+            )
+
+        ).exclude(
+
+            is_unsent=True
+
+        ).order_by(
+
+            "timestamp"
+
+        )
+
+
+        # =========================================
+        # 5. Extract text messages
+        # =========================================
+
+        conversation_messages = []
+
+        for message in messages:
+
+            # Ignore empty messages
+            if not message.content.strip():
+
+                continue
+
+            # Determine message sender
+            sender_name = message.sender.username
+
+            conversation_messages.append(
+                f"{sender_name}: {message.content}"
+            )
+
+
+        # =========================================
+        # 6. Check whether conversation exists
+        # =========================================
+
+        if not conversation_messages:
+
+            return JsonResponse(
+                {
+                    "success": False,
+                    "error": "There are no text messages to analyze."
+                },
+                status=400
+            )
+
+
+        # =========================================
+        # 7. Limit conversation size
+        # =========================================
+
+        # Analyze the latest 100 text messages
+        conversation_messages = conversation_messages[-100:]
+
+
+        conversation_text = "\n".join(
+            conversation_messages
+        )
+
+
+        # =========================================
+        # 8. Prepare AI instructions
+        # =========================================
+
+        instructions = {
+
+            "summary": """
+
+Analyze the conversation and provide:
+
+1. Conversation Overview
+2. Key Discussion Points
+3. Important Decisions
+4. Pending Tasks
+5. Unresolved Issues
+
+Keep the summary clear, structured and concise.
+
+""",
+
+            "decisions": """
+
+Analyze the conversation.
+
+Extract only decisions that the participants explicitly
+made or clearly agreed upon.
+
+For each decision, explain it briefly.
+
+Do not invent decisions.
+
+If no decisions were made, say so.
+
+""",
+
+            "tasks": """
+
+Analyze the conversation.
+
+Extract actionable tasks.
+
+For each task, provide:
+
+1. Task description
+2. Responsible person, if identifiable
+3. Deadline, if mentioned
+
+Do not invent deadlines or task assignments.
+
+If no tasks were identified, say so.
+
+""",
+
+            "questions": """
+
+Analyze the conversation.
+
+Identify questions or important issues that remain
+unanswered or unresolved.
+
+Explain briefly why each issue may need attention.
+
+Do not invent unanswered questions.
+
+""",
+
+            "replies": """
+
+Analyze the conversation and suggest three possible
+replies that the current user could send to the other
+participant.
+
+The replies should:
+
+1. Be relevant to the conversation.
+2. Sound natural.
+3. Have different tones or approaches.
+4. Avoid inventing facts.
+
+Clearly separate the three suggested replies.
+
+"""
+
+        }
+
+
+        # =========================================
+        # 9. Construct AI prompt
+        # =========================================
+
+        prompt = f"""
+
+You are an intelligent conversation analysis assistant.
+
+You are analyzing a private conversation between two people.
+
+The person requesting the analysis is:
+
+{request.user.username}
+
+The other participant is:
+
+{other_user.username}
+
+
+IMPORTANT RULES:
+
+- Use only information contained in the conversation.
+- Do not invent facts.
+- Do not assume information that is not stated.
+- Respect the context of the conversation.
+- Use clear and readable formatting.
+
+
+TASK:
+
+{instructions[action]}
+
+
+CONVERSATION:
+
+{conversation_text}
+
+
+Provide your analysis now.
+
+"""
+
+
+        # =========================================
+        # 10. Send prompt to Ollama
+        # =========================================
+
+        answer = ask_ai(prompt)
+
+
+        # =========================================
+        # 11. Return AI result
+        # =========================================
+
+        return JsonResponse(
+            {
+                "success": True,
+                "action": action,
+                "answer": answer
+            }
+        )
+
+
+    # =============================================
+    # 12. Handle errors
+    # =============================================
+
+    except json.JSONDecodeError:
+
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "Invalid JSON request."
+            },
+            status=400
+        )
+
+
+    except Exception as e:
+
+        print("CHAT AI INSIGHTS ERROR:", str(e))
+
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "An error occurred while analyzing the conversation."
+            },
+            status=500
+        )

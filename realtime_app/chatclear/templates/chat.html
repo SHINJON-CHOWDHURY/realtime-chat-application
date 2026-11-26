@@ -1525,6 +1525,105 @@ body.dark-mode .attachment-file {
 
     overflow-wrap: anywhere !important;
 }
+
+/* =========================================
+   AI CHAT INSIGHTS BUTTON
+   ========================================= */
+
+#chat-ai-insights-btn {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 9px 14px;
+
+    border: 1px solid #ffffff59;
+
+    border-radius: 10px;
+
+    background:#FF6200;
+
+    color: white;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+    flex-shrink: 0;
+}
+
+#chat-ai-insights-btn:hover {
+
+    transform: translateY(-2px);
+
+     box-shadow: 
+        0 4px 12px
+        rgba(139, 92, 246, 0.35); 
+        
+}
+
+#chat-ai-insights-btn:active {
+
+    transform: scale(0.95);
+}
+
+#chat-ai-insights-btn i {
+
+    font-size: 14px;
+}
+
+
+/* Mobile layout */
+
+@media (max-width: 600px) {
+
+    #chat-ai-insights-btn {
+
+        padding: 9px;
+
+        gap: 0;
+    }
+
+    #chat-ai-insights-btn span {
+
+        display: none;
+    }
+
+}
+
+/* User's selected AI request */
+#ai-insights-request {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.ai-insights-request-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #a78bfa;
+    margin-bottom: 8px;
+}
+
+#ai-insights-request-text {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-main);
+    overflow-wrap: anywhere;
+}
         </style>
     </head>
     <body>
@@ -1555,6 +1654,15 @@ body.dark-mode .attachment-file {
             display: flex;
             gap: 15px;
           ">
+          <!-- AI INSIGHTS BUTTON -->
+<button
+    id="chat-ai-insights-btn"
+    type="button"
+    title="AI Chat Insights"
+>
+    <i class="fas fa-wand-magic-sparkles"></i>
+    <span>AI Insights</span>
+</button>
                     <i class="fas fa-phone" id="audio-call" style="cursor: pointer"></i>
                     <i class="fas fa-video" id="video-call" style="cursor: pointer"></i>
                 </div>
@@ -1567,7 +1675,267 @@ body.dark-mode .attachment-file {
                         </form>
                     </div>
                 </div>
+
             </header>
+            <!-- =========================================
+     AI INSIGHTS PANEL
+     ========================================= -->
+
+<div id="ai-insights-overlay">
+
+    <div id="ai-insights-panel">
+
+        <!-- PANEL HEADER -->
+
+        <div class="ai-insights-header">
+
+            <div class="ai-insights-title">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                <span>AI Chat Insights</span>
+            </div>
+
+            <button
+                id="close-ai-insights"
+                type="button"
+                title="Close"
+            >
+                <i class="fas fa-times"></i>
+            </button>
+
+        </div>
+
+
+        <!-- PANEL DESCRIPTION -->
+
+        <div class="ai-insights-description">
+
+            Analyze your conversation using AI.
+
+        </div>
+
+
+        <!-- AI ACTIONS -->
+
+        <div class="ai-insights-actions">
+
+
+            <!-- SUMMARY -->
+
+            <button
+                class="ai-insights-action"
+                data-action="summary"
+                type="button"
+            >
+
+                <div class="ai-insights-icon summary-icon">
+                    <i class="fas fa-file-lines"></i>
+                </div>
+
+                <div class="ai-insights-action-text">
+
+                    <span class="ai-insights-action-title">
+                        Summarize Conversation
+                    </span>
+
+                    <span class="ai-insights-action-description">
+                        Get an overview of the entire conversation.
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right ai-insights-arrow"></i>
+
+            </button>
+
+
+            <!-- DECISIONS -->
+
+            <button
+                class="ai-insights-action"
+                data-action="decisions"
+                type="button"
+            >
+
+                <div class="ai-insights-icon decisions-icon">
+                    <i class="fas fa-thumbtack"></i>
+                </div>
+
+                <div class="ai-insights-action-text">
+
+                    <span class="ai-insights-action-title">
+                        Extract Decisions
+                    </span>
+
+                    <span class="ai-insights-action-description">
+                        Identify important decisions and agreements.
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right ai-insights-arrow"></i>
+
+            </button>
+
+
+            <!-- TASKS -->
+
+            <button
+                class="ai-insights-action"
+                data-action="tasks"
+                type="button"
+            >
+
+                <div class="ai-insights-icon tasks-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+
+                <div class="ai-insights-action-text">
+
+                    <span class="ai-insights-action-title">
+                        Generate Tasks
+                    </span>
+
+                    <span class="ai-insights-action-description">
+                        Extract tasks, responsibilities and deadlines.
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right ai-insights-arrow"></i>
+
+            </button>
+
+
+            <!-- QUESTIONS -->
+
+            <button
+                class="ai-insights-action"
+                data-action="questions"
+                type="button"
+            >
+
+                <div class="ai-insights-icon questions-icon">
+                    <i class="fas fa-circle-question"></i>
+                </div>
+
+                <div class="ai-insights-action-text">
+
+                    <span class="ai-insights-action-title">
+                        Unanswered Questions
+                    </span>
+
+                    <span class="ai-insights-action-description">
+                        Find unresolved questions and issues.
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right ai-insights-arrow"></i>
+
+            </button>
+
+
+            <!-- REPLIES -->
+
+            <button
+                class="ai-insights-action"
+                data-action="replies"
+                type="button"
+            >
+
+                <div class="ai-insights-icon replies-icon">
+                    <i class="fas fa-reply"></i>
+                </div>
+
+                <div class="ai-insights-action-text">
+
+                    <span class="ai-insights-action-title">
+                        Suggest Replies
+                    </span>
+
+                    <span class="ai-insights-action-description">
+                        Generate replies based on chat context.
+                    </span>
+
+                </div>
+
+                <i class="fas fa-chevron-right ai-insights-arrow"></i>
+
+            </button>
+
+
+        </div>
+
+
+        <!-- =========================================
+     AI INSIGHTS RESULT AREA
+     ========================================= -->
+
+<div id="ai-insights-result-container" style="display: none;">
+
+    <!-- Loading indicator -->
+
+    <div id="ai-insights-loading" style="display: none;">
+
+        <div class="ai-insights-loader"></div>
+
+        <p id="ai-insights-loading-text">
+            AI is analyzing the conversation...
+        </p>
+
+    </div>
+
+
+    <!-- Result -->
+
+   <div id="ai-insights-result">
+
+    <!-- Displays the request/action selected by the user -->
+    <div id="ai-insights-request">
+        <div class="ai-insights-request-label">
+            <i class="fas fa-comment-dots"></i>
+            <span>Your Request</span>
+        </div>
+
+        <div id="ai-insights-request-text"></div>
+    </div>
+
+    <!-- AI-generated response section -->
+    <div class="ai-insights-result-header">
+        <span><i class="fas fa-sparkles"></i> AI Analysis</span>
+
+        <button id="ai-insights-copy" type="button" title="Copy AI result">
+            <i class="fas fa-copy"></i>
+        </button>
+    </div>
+
+    <div id="ai-insights-result-content"></div>
+
+</div>
+
+
+    <!-- Error -->
+
+    <div id="ai-insights-error" style="display: none;"></div>
+
+</div>
+
+
+        <!-- PANEL FOOTER -->
+
+        <div class="ai-insights-footer">
+
+            <i class="fas fa-shield-halved"></i>
+
+            <span>
+                AI analysis powered by your local AI model.
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
 <div id="chat-box">
 
     <!-- Unified chronological timeline: normal messages and AI exchanges -->
@@ -1981,6 +2349,552 @@ body.dark-mode .attachment-file {
 
                 }
 
+               /* =========================================
+   AI INSIGHTS PANEL
+   ========================================= */
+
+#ai-insights-overlay {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 20000;
+
+    background: rgba(0, 0, 0, 0.45);
+
+    backdrop-filter: blur(3px);
+
+    -webkit-backdrop-filter: blur(3px);
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 15px;
+}
+
+
+/* PANEL */
+
+#ai-insights-panel {
+
+    width: 100%;
+
+    max-width: 480px;
+
+    background: var(--bg-chat);
+
+    color: var(--text-main);
+
+    border: 1px solid var(--border);
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    box-shadow:
+
+        0 20px 60px rgba(0, 0, 0, 0.25);
+
+    animation: aiInsightsAppear 0.25s ease;
+    max-height: 85vh;
+overflow-y: auto;
+
+}
+
+
+/* PANEL ANIMATION */
+
+@keyframes aiInsightsAppear {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(15px) scale(0.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0) scale(1);
+
+    }
+
+}
+
+
+/* HEADER */
+
+.ai-insights-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 10px;
+
+}
+
+
+.ai-insights-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+}
+
+
+.ai-insights-title i {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            #8b5cf6,
+            #06b6d4
+        );
+
+    -webkit-background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    background-clip: text;
+
+}
+
+
+#close-ai-insights {
+
+    width: 36px;
+
+    height: 36px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: var(--text-sub);
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s;
+
+}
+
+
+#close-ai-insights:hover {
+
+    background: rgba(128, 128, 128, 0.15);
+
+    transform: rotate(90deg);
+
+}
+
+
+/* DESCRIPTION */
+
+.ai-insights-description {
+
+    font-size: 13px;
+
+    color: var(--text-sub);
+
+    margin-bottom: 22px;
+
+}
+
+
+/* ACTION LIST */
+
+.ai-insights-actions {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+}
+
+
+/* ACTION BUTTON */
+
+.ai-insights-action {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+
+    background: var(--bg-received);
+
+    color: var(--text-main);
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+
+        transform 0.2s ease,
+
+        border-color 0.2s ease,
+
+        background 0.2s ease;
+
+}
+
+
+.ai-insights-action:hover {
+
+    transform: translateY(-2px);
+
+    border-color: #8b5cf6;
+
+    background:
+
+        rgba(139, 92, 246, 0.06);
+
+}
+
+
+.ai-insights-action:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ACTION ICON */
+
+.ai-insights-icon {
+
+    width: 44px;
+
+    height: 44px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    font-size: 18px;
+
+}
+
+
+/* ICON COLORS */
+
+.summary-icon {
+
+    background: rgba(6, 182, 212, 0.12);
+
+    color: #06b6d4;
+
+}
+
+
+.decisions-icon {
+
+    background: rgba(139, 92, 246, 0.12);
+
+    color: #8b5cf6;
+
+}
+
+
+.tasks-icon {
+
+    background: rgba(34, 197, 94, 0.12);
+
+    color: #22c55e;
+
+}
+
+
+.questions-icon {
+
+    background: rgba(245, 158, 11, 0.12);
+
+    color: #f59e0b;
+
+}
+
+
+.replies-icon {
+
+    background: rgba(236, 72, 153, 0.12);
+
+    color: #ec4899;
+
+}
+
+
+/* ACTION TEXT */
+
+.ai-insights-action-text {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 4px;
+
+    flex: 1;
+
+    min-width: 0;
+
+}
+
+
+.ai-insights-action-title {
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.ai-insights-action-description {
+
+    font-size: 12px;
+
+    line-height: 1.4;
+
+    color: var(--text-sub);
+
+}
+
+
+/* ARROW */
+
+.ai-insights-arrow {
+
+    font-size: 12px;
+
+    color: var(--text-sub);
+
+    flex-shrink: 0;
+
+}
+
+
+/* FOOTER */
+
+.ai-insights-footer {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 11px;
+
+    color: var(--text-sub);
+
+    margin-top: 20px;
+
+    padding-top: 15px;
+
+    border-top: 1px solid var(--border);
+
+}
+
+
+.ai-insights-footer i {
+
+    color: var(--wa-teal);
+
+}
+
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+    #ai-insights-panel {
+
+        padding: 16px;
+
+        border-radius: 16px;
+
+    }
+
+
+    .ai-insights-title {
+
+        font-size: 18px;
+
+    }
+
+
+    .ai-insights-action {
+
+        padding: 11px;
+
+    }
+
+
+    .ai-insights-icon {
+
+        width: 40px;
+
+        height: 40px;
+
+    }
+
+} 
+
+/* =========================================
+   AI INSIGHTS RESULT
+   ========================================= */
+
+#ai-insights-result-container {
+    margin-top: 18px;
+}
+
+#ai-insights-loading {
+    text-align: center;
+    padding: 20px 10px;
+    color: var(--text-sub);
+}
+
+.ai-insights-loader {
+    width: 38px;
+    height: 38px;
+    border: 3px solid rgba(139, 92, 246, 0.2);
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: aiInsightsSpin 0.8s linear infinite;
+    margin: 0 auto 12px;
+}
+
+@keyframes aiInsightsSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#ai-insights-loading-text {
+    font-size: 13px;
+}
+
+#ai-insights-result {
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-left: 3px solid #06b6d4;
+    border-radius: 12px;
+    background: var(--bg-received);
+}
+
+.ai-insights-result-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.ai-insights-result-header > span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-insights-result-header i {
+    color: #06b6d4;
+}
+
+#ai-insights-copy {
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 6px;
+}
+
+#ai-insights-copy:hover {
+    color: var(--text-main);
+}
+
+#ai-insights-result-content {
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+#ai-insights-error {
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 10px;
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.08);
+    font-size: 13px;
+}
+
+#ai-insights-panel {
+    overflow-y: auto;
+    max-height: 85vh;
+    overscroll-behavior: contain;
+}
+
+#ai-insights-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+#ai-insights-panel::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.5);
+    border-radius: 10px;
+}
+
+#ai-insights-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
             </style>
 
 
@@ -2149,10 +3063,309 @@ body.dark-mode .attachment-file {
 <script>
 const chatBox = document.getElementById("chat-box");
 const messageInput = document.getElementById("message-input");
+// =========================================
+// AI INSIGHTS PANEL CONTROLS
+// =========================================
+
+const aiInsightsButton = document.getElementById(
+    "chat-ai-insights-btn"
+);
+
+const aiInsightsOverlay = document.getElementById(
+    "ai-insights-overlay"
+);
+
+const closeAIInsightsButton = document.getElementById(
+    "close-ai-insights"
+);
+
+
+// Open AI Insights panel
+
+aiInsightsButton.addEventListener("click", function () {
+
+    aiInsightsOverlay.style.display = "flex";
+
+});
+
+
+// Close AI Insights panel
+
+closeAIInsightsButton.addEventListener("click", function () {
+
+    aiInsightsOverlay.style.display = "none";
+
+});
+
+
+// Close when clicking outside the panel
+
+aiInsightsOverlay.addEventListener("click", function (event) {
+
+    if (event.target === aiInsightsOverlay) {
+
+        aiInsightsOverlay.style.display = "none";
+
+    }
+
+});
+
+
+// Close panel using Escape key
+
+document.addEventListener("keydown", function (event) {
+
+    if (event.key === "Escape") {
+
+        aiInsightsOverlay.style.display = "none";
+
+    }
+
+});
 
 const currentUser = "{{ request.user.username }}";
 const currentUserId = Number("{{ request.user.id }}");
 const userId = "{{ other_user.id }}";
+
+// =========================================
+// AI INSIGHTS BACKEND INTEGRATION
+// =========================================
+
+const aiInsightsActions = document.querySelectorAll(
+    ".ai-insights-action"
+);
+
+const aiInsightsResultContainer = document.getElementById(
+    "ai-insights-result-container"
+);
+
+const aiInsightsLoading = document.getElementById(
+    "ai-insights-loading"
+);
+
+const aiInsightsResultContent = document.getElementById(
+    "ai-insights-result-content"
+);
+
+const aiInsightsError = document.getElementById(
+    "ai-insights-error"
+);
+
+const aiInsightsCopyButton = document.getElementById(
+    "ai-insights-copy"
+);
+
+
+// Django endpoint for the currently selected conversation
+
+const aiInsightsURL = "{% url 'chat_ai_insights' other_user.id %}";
+
+
+// CSRF token retrieval
+
+function getAIInsightsCSRFToken() {
+
+    const csrfInput = document.querySelector(
+        'input[name="csrfmiddlewaretoken"]'
+    );
+
+    if (csrfInput) {
+        return csrfInput.value;
+    }
+
+    const cookies = document.cookie.split(";");
+
+    for (const cookie of cookies) {
+
+        const trimmedCookie = cookie.trim();
+
+        if (trimmedCookie.startsWith("csrftoken=")) {
+
+            return trimmedCookie.substring(
+                "csrftoken=".length
+            );
+
+        }
+
+    }
+
+    return "";
+
+}
+
+
+// Button loading state
+
+function setAIInsightsButtonsDisabled(disabled) {
+
+    aiInsightsActions.forEach(button => {
+
+        button.disabled = disabled;
+
+    });
+
+}
+
+
+// Execute an AI insight operation
+
+async function runAIInsights(action) {
+
+    aiInsightsResultContainer.style.display = "block";
+
+    aiInsightsLoading.style.display = "block";
+
+    aiInsightsError.style.display = "none";
+
+    aiInsightsResultContent.textContent = "";
+
+    const requestNames = {
+    summary: "Summarize the entire conversation, including key points, decisions, pending tasks and unresolved issues.",
+    decisions: "Extract the important decisions and agreements made during the conversation.",
+    tasks: "Extract tasks, responsibilities and deadlines mentioned in the conversation.",
+    questions: "Identify unanswered questions and unresolved issues in the conversation.",
+    replies: "Generate three context-aware suggested replies for this conversation."
+};
+
+document.getElementById("ai-insights-request-text").textContent =
+    requestNames[action] || "Analyze the conversation.";
+
+    setAIInsightsButtonsDisabled(true);
+
+
+    const actionNames = {
+
+        summary: "Summarizing conversation...",
+
+        decisions: "Extracting decisions...",
+
+        tasks: "Generating tasks...",
+
+        questions: "Finding unanswered questions...",
+
+        replies: "Generating reply suggestions..."
+
+    };
+
+
+    document.getElementById(
+        "ai-insights-loading-text"
+    ).textContent = actionNames[action] || "AI is analyzing...";
+
+
+    try {
+
+        const response = await fetch(aiInsightsURL, {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                "X-CSRFToken": getAIInsightsCSRFToken()
+
+            },
+
+            body: JSON.stringify({
+
+                action: action
+
+            })
+
+        });
+
+
+        const data = await response.json();
+
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.error || "AI analysis failed."
+            );
+
+        }
+
+
+        // Display the AI result safely as plain text
+
+        aiInsightsResultContent.textContent = data.answer;
+
+
+    } catch (error) {
+
+        console.error("AI INSIGHTS ERROR:", error);
+
+
+        aiInsightsError.textContent =
+            error.message || "Something went wrong.";
+
+        aiInsightsError.style.display = "block";
+
+
+    } finally {
+
+        aiInsightsLoading.style.display = "none";
+
+        setAIInsightsButtonsDisabled(false);
+
+    }
+
+}
+
+
+// Connect the five action buttons
+
+aiInsightsActions.forEach(button => {
+
+    button.addEventListener("click", function () {
+
+        const action = this.dataset.action;
+
+        runAIInsights(action);
+
+    });
+
+});
+
+
+// Copy AI result
+
+aiInsightsCopyButton.addEventListener("click", async function () {
+
+    const result = aiInsightsResultContent.textContent.trim();
+
+    if (!result) {
+        return;
+    }
+
+    try {
+
+        await navigator.clipboard.writeText(result);
+
+        const originalHTML = this.innerHTML;
+
+        this.innerHTML = '<i class="fas fa-check"></i>';
+
+        setTimeout(() => {
+
+            this.innerHTML = originalHTML;
+
+        }, 1500);
+
+    } catch (error) {
+
+        console.error("Copy failed:", error);
+
+        aiInsightsError.textContent =
+            "Unable to copy the result.";
+
+        aiInsightsError.style.display = "block";
+
+    }
+
+});
 
 // =========================================
 // AUTOMATIC SCROLL TO LATEST CHAT
